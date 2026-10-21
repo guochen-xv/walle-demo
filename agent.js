@@ -6,7 +6,7 @@ const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const fmt=t=>`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
 const offsets=D.clips.map((_,i)=>D.clips.slice(0,i).reduce((s,c)=>s+c.duration,0)),total=D.clips.reduce((s,c)=>s+c.duration,0);
 let s,loadToken=0,loaded=false,buffering=false,last=0,revision='',seekTarget=0,mediaError='';
-const blobs=new Map();
+window.WalleLearningMedia?.preloadAgent(D.clips);
 let lastMediaPhase=null,phaseTransition=false,transitionOutDone=true;
 let scrubbing=false,resumeAfterScrub=false;
 root.innerHTML=`<div class="ag-toolbar"><div class="ag-buttons"><button id="ag-play" class="primary">▶ Play task</button><button id="ag-reset" class="outline">↺ Replay</button><label>Speed <select id="ag-speed" aria-label="Playback speed"><option value="1">1×</option><option value="2">2×</option><option value="3" selected>3×</option><option value="4">4×</option></select></label></div><label>Scenario walkthrough <select id="ag-scenario"><option value="success">Successful sequence</option></select></label></div>
@@ -24,8 +24,7 @@ function log(message){s.events.unshift(message);s.events=s.events.slice(0,20);}
 function pause(){if(scrubbing)resumeAfterScrub=false;s.playing=false;pauseMedia();render();}
 async function mediaURL(url){
  if(!location.protocol.startsWith('http'))return url;
- if(!blobs.has(url))blobs.set(url,(async()=>{const h=await fetch(url,{method:'HEAD'});if(h.headers.get('Accept-Ranges')==='bytes')return url;const response=await fetch(url);if(!response.ok)throw new Error('Video unavailable');return URL.createObjectURL(await response.blob());})().catch(e=>{blobs.delete(url);throw e;}));
- return blobs.get(url);
+ return window.WalleLearningMedia.agentSource(url);
 }
 function finishPhaseTransition(){
  if(!phaseTransition)return;

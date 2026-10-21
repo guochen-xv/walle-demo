@@ -206,12 +206,48 @@ $('#framework-zoom-out').onclick=()=>zoomDiagram(.8);
 diagramImage.addEventListener('load',()=>{if(frameworkDialog.open)fitDiagram();});
 diagramImage.draggable=false;
 diagramViewport.addEventListener('wheel',e=>{e.preventDefault();const r=diagramViewport.getBoundingClientRect();const delta=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?diagramViewport.clientHeight:1);zoomDiagram(Math.exp(-Math.max(-160,Math.min(160,delta))*.0025),e.clientX-r.left,e.clientY-r.top);},{passive:false});
-diagramViewport.addEventListener('pointerdown',e=>{if(!e.isPrimary||e.button!==0)return;diagram.drag={id:e.pointerId,x:e.clientX,y:e.clientY};diagramViewport.setPointerCapture(e.pointerId);diagramViewport.classList.add('dragging');diagramViewport.focus({preventScroll:true});});
-diagramViewport.addEventListener('pointermove',e=>{if(diagram.drag?.id!==e.pointerId)return;diagram.x+=e.clientX-diagram.drag.x;diagram.y+=e.clientY-diagram.drag.y;diagram.drag.x=e.clientX;diagram.drag.y=e.clientY;drawDiagram();});
-function endDiagramDrag(){diagram.drag=null;diagramViewport.classList.remove('dragging');}
-diagramViewport.addEventListener('pointerup',endDiagramDrag);
-diagramViewport.addEventListener('pointercancel',endDiagramDrag);
-diagramViewport.addEventListener('lostpointercapture',endDiagramDrag);
+const diagramPointers=new Map();let diagramGesture=null,lastDiagramTap=null,tapStart=null,lastDiagramTouch=-Infinity;
+function gestureSnapshot(){
+ const points=[...diagramPointers.values()],r=diagramViewport.getBoundingClientRect();
+ if(points.length>=2){const [a,b]=points;return {x:(a.x+b.x)/2-r.left,y:(a.y+b.y)/2-r.top,distance:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y))};}
+ return points.length?{x:points[0].x-r.left,y:points[0].y-r.top}:null;
+}
+diagramViewport.addEventListener('pointerdown',e=>{
+ if(e.pointerType==='mouse'&&e.button!==0)return;
+ if(e.pointerType!=='mouse')lastDiagramTouch=performance.now();
+ e.preventDefault();diagramPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ diagramViewport.setPointerCapture(e.pointerId);diagramGesture=gestureSnapshot();
+ tapStart=diagramPointers.size===1?{x:e.clientX,y:e.clientY,time:performance.now(),touch:e.pointerType!=='mouse'}:null;
+ if(diagramPointers.size>1)lastDiagramTap=null;
+ diagramViewport.classList.add('dragging');diagramViewport.focus({preventScroll:true});
+});
+diagramViewport.addEventListener('pointermove',e=>{
+ if(!diagramPointers.has(e.pointerId))return;e.preventDefault();
+ if(tapStart&&Math.hypot(e.clientX-tapStart.x,e.clientY-tapStart.y)>8)tapStart=null;
+ diagramPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});const next=gestureSnapshot(),previous=diagramGesture;
+ if(previous&&next){
+  if(previous.distance&&next.distance){
+   const scale=Math.max(diagram.fit,Math.min(diagram.fit*8,diagram.scale*next.distance/previous.distance)),ratio=scale/diagram.scale;
+   diagram.x=next.x-(previous.x-diagram.x)*ratio;diagram.y=next.y-(previous.y-diagram.y)*ratio;diagram.scale=scale;
+  }else{diagram.x+=next.x-previous.x;diagram.y+=next.y-previous.y;}
+  drawDiagram();
+ }
+ diagramGesture=next;
+});
+function toggleDiagramZoom(x,y){if(diagram.scale>diagram.fit*1.05)fitDiagram();else zoomDiagram(2.5,x,y);}
+function finishDiagramPointer(e){
+ if(!diagramPointers.has(e.pointerId))return;
+ if(e.type==='pointerup'&&tapStart?.touch&&performance.now()-tapStart.time<300){
+  const r=diagramViewport.getBoundingClientRect(),now=performance.now();
+  if(lastDiagramTap&&now-lastDiagramTap.time<350&&Math.hypot(e.clientX-lastDiagramTap.x,e.clientY-lastDiagramTap.y)<24){toggleDiagramZoom(e.clientX-r.left,e.clientY-r.top);lastDiagramTap=null;}
+  else lastDiagramTap={x:e.clientX,y:e.clientY,time:now};
+ }
+ tapStart=null;diagramPointers.delete(e.pointerId);diagramGesture=gestureSnapshot();
+ if(!diagramPointers.size)diagramViewport.classList.remove('dragging');
+}
+function endDiagramDrag(){diagramPointers.clear();diagramGesture=null;tapStart=null;lastDiagramTap=null;diagramViewport.classList.remove('dragging');}
+['pointerup','pointercancel','lostpointercapture'].forEach(event=>diagramViewport.addEventListener(event,finishDiagramPointer));
+diagramViewport.addEventListener('dblclick',e=>{if(e.sourceCapabilities?.firesTouchEvents||performance.now()-lastDiagramTouch<600)return;const r=diagramViewport.getBoundingClientRect();toggleDiagramZoom(e.clientX-r.left,e.clientY-r.top);});
 frameworkDialog.addEventListener('close',endDiagramDrag);
 frameworkDialog.addEventListener('keydown',e=>{if(e.key==='Escape')return;const pan={ArrowLeft:[40,0],ArrowRight:[-40,0],ArrowUp:[0,40],ArrowDown:[0,-40]}[e.key];if(pan){e.preventDefault();diagram.x+=pan[0];diagram.y+=pan[1];drawDiagram();}else if(['+','=','-','0'].includes(e.key)){e.preventDefault();if(e.key==='0')fitDiagram();else zoomDiagram(e.key==='-'?.8:1.25);}});
 window.addEventListener('resize',()=>{if(frameworkDialog.open)fitDiagram();});

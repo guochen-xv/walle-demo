@@ -4,7 +4,7 @@ An interactive website for Situated Learning, Situation and Situated Agent.
 
 ## Open
 
-Extract the complete package and open `index.html` in Chrome or Edge. Keep all supplied files together. For HTTP preview, run `python3 -m http.server 8766 --bind 127.0.0.1` from this directory, then open http://127.0.0.1:8766.
+Extract the complete package and open `index.html` in Chrome or Edge. Keep the assets directory beside the page. For HTTP preview, run `python3 serve.py --port 8766`, then open http://127.0.0.1:8766.
 
 ## Structure
 
