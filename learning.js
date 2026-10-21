@@ -5,7 +5,7 @@
  D.offline[3][0]='Foundation Model Reasoning';D.offline[3][4]='The framework uses foundation-model reasoning to refine coarse clips and describe actions, objects, goals and phase contracts.';
  D.offline[4][0]='Semantic Phase Refinement';D.offline[4][4]='Coarse event clips are merged or refined into four meaningful phases. Semantic boundaries organize the event-based clips into task phases.';
  D.offline[5][0]='Phase Contracts & Routing';
- $('#mini-episodes').innerHTML=D.episodes.map((e,i)=>`<article class="mini-episode ${i===0?'focus':''}" data-episode="${e.episodeId}" data-position="${i===0?'center':i===1?'right':'left'}" aria-label="Robot demonstration"><p class="demo-task">Task: <strong>Unzip bag</strong></p><div class="episode-views">${[['left','Left wrist'],['main','Main camera'],['right','Right wrist']].map(([view,label])=>`<figure>${i===0?`<video class="demo-inline-video" data-view="${view}" data-src="${e.videos[view]}" muted playsinline preload="auto" aria-label="${label} demonstration"></video>`:`<img class="demo-inline-video" src="${e.images[view]}" alt="${label} demonstration" loading="lazy">`}</figure>`).join('')}</div></article>`).join('');
+ $('#mini-episodes').innerHTML=D.episodes.map((e,i)=>`<article class="mini-episode ${i===0?'focus':''}" data-episode="${e.episodeId}" data-position="${i===0?'center':i===1?'right':'left'}" aria-label="Robot demonstration"><p class="demo-task">Task: <strong>Unzip bag</strong></p><div class="episode-views">${[['left','Left wrist'],['main','Main camera'],['right','Right wrist']].map(([view,label])=>`<figure>${i===0?`<video class="demo-inline-video" data-view="${view}" data-src="${e.videos[view]}" muted playsinline preload="none" aria-label="${label} demonstration"></video>`:`<img class="demo-inline-video" src="${e.images[view]}" alt="${label} demonstration" loading="lazy">`}</figure>`).join('')}</div></article>`).join('');
  window.WalleEpisodes.init();
  $('#coarse-count').textContent=`${D.coarse.clips.length} candidate clips`;
  $('#coarse-tracks').innerHTML=['left','right'].map(side=>`<div><span>${side==='left'?'L':'R'}</span><svg viewBox="0 0 2659 28" preserveAspectRatio="none" aria-label="Recorded ${side} gripper"><path d="${S[side].slice(0,2659).map((v,i)=>`${i?'L':'M'}${i+.5} ${(24-v*20).toFixed(2)}`).join('')}"/>${groups.map(g=>`<line x1="${g.frame+1}" x2="${g.frame+1}" y1="0" y2="28"/>`).join('')}</svg></div>`).join('');
@@ -16,50 +16,52 @@
   return ['left','right'].map(side=>`<div class="phase-gripper-row"><span>${side==='left'?'L':'R'}</span><svg viewBox="0 0 ${length} 28" preserveAspectRatio="none" aria-label="Phase ${p.id} recorded ${side} gripper"><path d="${S[side].slice(start,end+1).map((v,i)=>`${i?'L':'M'}${i} ${(24-v*20).toFixed(2)}`).join('')}"/>${clips.slice(0,-1).map(c=>`<line class="phase-cut" x1="${c.frames[1]-start}" x2="${c.frames[1]-start}" y1="0" y2="28"/>`).join('')}<line class="phase-video-cursor" x1="0" x2="0" y1="0" y2="28"/></svg></div>`).join('')+`<div class="phase-coarse-segments">${clips.map(c=>`<span style="flex:${c.frames[1]-c.frames[0]+1}" title="Coarse clip ${c.id+1}: ${c.frames.join('–')}">${c.id+1}</span>`).join('')}</div>`;
  }
  $('#semantic-phases').innerHTML=P.map(p=>`<button type="button" data-phase="${p.id}" aria-pressed="${p.id===0}"><span class="phase-option-heading"><small>P${p.id}</small><strong>${p.name}</strong><em>${p.method}</em></span></button>`).join('');
- $('#semantic-preview').innerHTML=P.map(p=>`<article class="semantic-video-card" data-preview-panel="${p.id}" ${p.id!==0?'hidden':''}><div class="phase-preview-prompt"><small>PROMPT</small><p>${p.prompt}</p></div><div class="phase-three-views">${['left','main','right'].map(view=>`<video class="phase-preview-video" data-phase-preview="${p.id}" data-camera="${view}" src="ep0-phase${p.id}${view==='main'?'':'-'+view}-preview.mp4" poster="${p.views[view]}" muted playsinline preload="metadata" aria-label="${p.name} · ${view==='main'?'Main camera':view+' wrist'}"></video>`).join('')}</div><div class="phase-gripper-evidence">${phaseTracks(p)}</div><div class="phase-frame-caption">Frames ${p.frames.join('–')} · Clip${p.id===0?'s 1–7':' '+(p.id+7)}</div><span class="phase-video-error" hidden>Preview unavailable</span></article>`).join('');
+ $('#semantic-preview').innerHTML=P.map(p=>`<article class="semantic-video-card" data-preview-panel="${p.id}" ${p.id!==0?'hidden':''}><div class="phase-preview-prompt"><small>PROMPT</small><p>${p.prompt}</p></div><div class="phase-three-views">${['left','main','right'].map(view=>`<video class="phase-preview-video" data-phase-preview="${p.id}" data-camera="${view}"  poster="${p.views[view]}" muted playsinline preload="none" aria-label="${p.name} · ${view==='main'?'Main camera':view+' wrist'}"></video>`).join('')}</div><div class="phase-gripper-evidence">${phaseTracks(p)}</div><div class="phase-frame-caption">Frames ${p.frames.join('–')} · Clip${p.id===0?'s 1–7':' '+(p.id+7)}</div><span class="phase-video-error" hidden>Preview unavailable</span></article>`).join('');
  const phasePreviews=initPhasePreviews();
  function initPhasePreviews(){
   const button=$('#phase-video-toggle'),reduce=matchMedia('(prefers-reduced-motion: reduce)');let manual=reduce.matches,active=0,disposed=false,running=true;
-  const groups=[...document.querySelectorAll('#semantic-preview article')].map(card=>({card,videos:[...card.querySelectorAll('video')],main:card.querySelector('[data-camera="main"]'),visible:false,busy:false,attempt:0,started:0,lastTime:0,lastAdvance:performance.now(),lastReload:-Infinity,stalled:false,prepared:false,preparing:null,urls:[]}));
+  const groups=[...document.querySelectorAll('#semantic-preview article')].map(card=>({card,range:window.WalleLearningMedia.range(Number(card.dataset.previewPanel)),videos:[...card.querySelectorAll('video')],main:card.querySelector('[data-camera="main"]'),visible:false,busy:false,attempt:0,started:0,lastTime:0,lastAdvance:performance.now(),lastReload:-Infinity,stalled:false,prepared:false,preparing:null,urls:[]}));
   const wanted=g=>running&&!disposed&&!manual&&!document.hidden&&!g.card.hidden&&g.visible;
   const stop=g=>{g.attempt++;g.busy=false;g.videos.forEach(v=>v.pause());};
   function label(){if(!button)return;const g=groups[active];button.textContent=manual||g.stalled?'Play video':'Pause video';button.setAttribute('aria-label',button.textContent);}
   async function prepare(g){
    if(g.prepared||g.preparing)return;
    g.preparing=Promise.all(g.videos.map(async v=>{
-    const source=v.getAttribute('src');v.dataset.originalSource=source;
-    // Small local clips are fully buffered so loops do not depend on server Range support.
-    if(location.protocol.startsWith('http'))try{const response=await fetch(source);if(!response.ok)throw Error('Video unavailable');const url=URL.createObjectURL(await response.blob());if(disposed){URL.revokeObjectURL(url);return;}g.urls.push(url);v.src=url;}catch{/* Retain direct playback if buffering is unavailable. */}
-    if(!disposed){v.preload='auto';v.load();}
-   })).finally(()=>{g.prepared=true;g.preparing=null;if(!disposed)update();});
+    const source=await window.WalleLearningMedia.source(v.dataset.camera);
+    if(!disposed){v.src=source;v.preload='auto';v.load();}
+
+   })).then(()=>{g.prepared=true;}).catch(()=>{g.stalled=true;g.lastReload=performance.now();g.card.querySelector('.phase-video-error').hidden=false;}).finally(()=>{g.preparing=null;if(g.prepared&&!disposed)update();});
   }
   function restart(g,reload=false){
-   stop(g);const time=g.main.ended?0:g.main.currentTime;g.lastAdvance=performance.now();g.lastTime=time;
+   stop(g);const time=g.main.ended||g.main.currentTime<g.range.start-1/60||g.main.currentTime>=g.range.end?g.range.start:g.main.currentTime;g.lastAdvance=performance.now();g.lastTime=time;
    g.videos.forEach(v=>{if(reload){v.load();}if(v.readyState>=1&&Number.isFinite(time)){try{v.currentTime=Math.min(time,Math.max(0,(v.duration||time+.1)-.05));}catch{}}});
   }
   function update(){
    groups.forEach(g=>{
     if(!wanted(g)){if(g.busy||g.videos.some(v=>!v.paused))stop(g);return;}
-    if(!g.prepared){prepare(g);return;}
-    if(g.busy||!g.videos.every(v=>v.readyState>=2&&!v.seeking))return;
+    if(!g.prepared){if(performance.now()-g.lastReload>3000)prepare(g);return;}
+    if(g.busy||!g.videos.every(v=>v.readyState>=1&&!v.seeking))return;
     if(g.videos.every(v=>!v.paused))return;
-    const time=g.main.ended?0:g.main.currentTime;
+    const time=g.main.ended||g.main.currentTime<g.range.start-1/60||g.main.currentTime>=g.range.end?g.range.start:g.main.currentTime;
     // Seek first; seeked events resume the group once all views have a decoded frame.
-    let seeking=false;g.videos.forEach(v=>{v.playbackRate=3;if(v.ended||Math.abs(v.currentTime-time)>.15){try{v.currentTime=time;seeking=true;}catch{}}});if(seeking)return;
+    let seeking=false;g.videos.forEach(v=>{v.playbackRate=g.range.rate;if(v.ended||v.currentTime<g.range.start-1/60||v.currentTime>=g.range.end||Math.abs(v.currentTime-time)>.15){try{v.currentTime=time;seeking=true;}catch{}}});if(seeking||!g.videos.every(v=>v.readyState>=2))return;
     g.busy=true;g.started=performance.now();const attempt=++g.attempt;
     Promise.all(g.videos.map(v=>v.play())).catch(error=>{if(g.attempt!==attempt)return;g.videos.forEach(v=>v.pause());if(error?.name==='NotAllowedError'){manual=true;g.stalled=true;}}).finally(()=>{if(g.attempt!==attempt)return;g.busy=false;if(!wanted(g))stop(g);label();});
    });label();
   }
   const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{const g=groups.find(g=>g.card===e.target);g.visible=e.isIntersecting&&e.intersectionRatio>=.15;if(g.visible){g.lastAdvance=performance.now();g.lastTime=g.main.currentTime;}});update();},{threshold:[0,.15]});
   groups.forEach(g=>{observer.observe(g.card);
-   g.videos.forEach(v=>{v.muted=true;v.defaultPlaybackRate=3;v.playbackRate=3;
-    ['canplay','loadeddata','seeked'].forEach(event=>v.addEventListener(event,update));
+   g.videos.forEach(v=>{v.muted=true;v.defaultPlaybackRate=g.range.rate;v.playbackRate=g.range.rate;
+    ['loadedmetadata','canplay','loadeddata','seeked'].forEach(event=>v.addEventListener(event,update));
     v.addEventListener('error',()=>{g.stalled=true;g.card.querySelector('.phase-video-error').hidden=false;label();});
-    v.addEventListener('ended',()=>{if(!wanted(g))return;restart(g);g.videos.forEach(other=>{if(other.readyState>=1)other.currentTime=0;});update();});
+    v.addEventListener('ended',()=>{if(!wanted(g))return;restart(g);g.videos.forEach(other=>{if(other.readyState>=1)other.currentTime=g.range.start;});update();});
    });
-   g.main.addEventListener('timeupdate',()=>{const p=P[Number(g.card.dataset.previewPanel)],x=Math.min(p.frames[1]-p.frames[0],Math.floor(g.main.currentTime*30));g.card.querySelectorAll('.phase-video-cursor').forEach(line=>{line.setAttribute('x1',x);line.setAttribute('x2',x);});});
+   const enforceEnd=()=>{if(wanted(g)&&g.main.currentTime>=g.range.end){stop(g);g.videos.forEach(v=>{if(v.readyState>=1)v.currentTime=g.range.start;});update();}};
+   if(g.main.requestVideoFrameCallback){const frame=()=>{if(disposed)return;enforceEnd();g.main.requestVideoFrameCallback(frame);};g.main.requestVideoFrameCallback(frame);}
+   g.main.addEventListener('timeupdate',()=>{enforceEnd();const p=P[Number(g.card.dataset.previewPanel)],x=Math.min(p.frames[1]-p.frames[0],Math.max(0,Math.floor((g.main.currentTime-g.range.start)*g.range.framesPerSecond)));g.card.querySelectorAll('.phase-video-cursor').forEach(line=>{line.setAttribute('x1',x);line.setAttribute('x2',x);});});
   });
   const sync=setInterval(()=>{const now=performance.now();groups.forEach(g=>{if(!wanted(g))return;
+   if(g.main.currentTime>=g.range.end){stop(g);g.videos.forEach(v=>{if(v.readyState>=1)v.currentTime=g.range.start;});g.lastTime=g.range.start;g.lastAdvance=now;}
    if(Math.abs(g.main.currentTime-g.lastTime)>.01){g.lastTime=g.main.currentTime;g.lastAdvance=now;g.stalled=false;g.card.querySelector('.phase-video-error').hidden=true;}
    if(g.busy&&now-g.started>2000){stop(g);g.stalled=true;}
    if(g.prepared&&now-g.lastAdvance>3000){g.stalled=true;if(now-g.lastReload>8000){g.lastReload=now;restart(g,true);}}
