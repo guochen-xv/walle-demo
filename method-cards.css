@@ -1,0 +1,46 @@
+/* Shared outer cards; component internals keep their own semantic colors. */
+.method-card{--method-accent:#487599;--method-wash:#f3f7fb;border:1px solid #dce4eb;border-radius:20px;background:#fff;box-shadow:0 4px 20px #30384605;overflow:hidden;position:relative}
+.method-situation{--method-accent:#8066a5;--method-wash:#f8f5fc;border-color:#e3dce9}
+.method-agent{--method-accent:#a3835c;--method-wash:#faf6f0;border-color:#e5ddd2}
+.method-header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:32px 28px 28px;background:linear-gradient(180deg,var(--method-wash) 0%,#fff 100%)}
+.method-header>div{min-width:0}
+.method-header .eyebrow{display:flex;align-items:center;min-height:16px;line-height:16px;font-size:10px;color:var(--method-accent);letter-spacing:1.6px}
+#workspace .method-header h2,.method-header h2{font-size:36px;font-weight:600;line-height:1.2;color:var(--method-accent);margin:13px 0 16px}
+.method-header p{font-size:14px;line-height:1.5;margin:0;color:#6b6b6b}
+.method-controls{text-align:right;flex-shrink:0;padding-top:2px}
+.method-controls #play-status{display:block;font-size:11px;color:#788492;margin-top:10px}
+.method-content{padding:28px}
+.learning-content{padding-bottom:0}
+#learning-card>.method-header{padding-bottom:12px}
+#learning-card>.learning-content{padding-top:12px}
+#offline-view{padding-bottom:48px}
+.method-task{max-width:330px;text-align:right}
+.method-task>div{display:flex;gap:12px;align-items:center;justify-content:flex-end;margin-bottom:8px}
+.method-task img{width:54px;height:auto}
+.method-task strong{font-size:20px;font-weight:600;color:#4e3c61}
+.method-task p{font-size:13px}
+#situation-card #phase-detail{padding:28px}
+#agent-card #agent-app{border:0;border-radius:0;box-shadow:none}
+section#situation.situation-section,section#agent.agent-section{position:relative;padding-top:72px}
+.method-bridge{position:absolute;top:0;left:0;width:100%;height:72px;pointer-events:none}
+.method-bridge svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.method-bridge>span{position:absolute;left:calc(50% + 14px);top:50%;transform:translateY(-50%);background:var(--bg);padding:2px 5px;font-size:12px;color:#8066a5;white-space:nowrap}
+[data-method-bridge=agent]>span{color:#92755d}
+@media(max-width:1000px){.method-header{align-items:flex-start;flex-wrap:wrap}.method-controls{flex-basis:100%;text-align:left}.method-controls .play-controls{justify-content:flex-start}.method-task{text-align:left;max-width:none}.method-task>div{justify-content:flex-start}}
+@media(max-width:600px){.method-header,.method-content,#situation-card #phase-detail{padding:18px}.learning-content{padding-bottom:0}.method-card{border-radius:20px}#workspace .method-header h2,.method-header h2{font-size:29px}.method-header{gap:18px}.method-task{flex-basis:100%}.method-controls .play-controls{flex-wrap:wrap}.method-bridge{height:56px}section#situation.situation-section,section#agent.agent-section{padding-top:56px}.method-bridge>span{font-size:10px;white-space:normal;max-width:43%;left:calc(50% + 8px)}#offline-view{padding-bottom:48px}}
+
+/* Agent already provides its own internal spacing. */
+#agent-card>.method-header{padding-bottom:12px}
+#agent-card .agent-content{padding:0}
+
+.method-eyebrow-logo{gap:8px}
+.situation-title-logo{display:block;width:28px;height:15px;object-fit:contain;flex:none}
+.situation-autoplay-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 28px;font-size:12px;color:#82768b;border-top:1px solid #ece5f1;background:#fff}
+#situation-autoplay{font:inherit;font-size:12px;border:1px solid #e1d7ea;border-radius:7px;padding:6px 10px;color:#8066a5;background:#faf7fd;cursor:pointer}
+#situation-autoplay:focus-visible{outline:2px solid #8066a5;outline-offset:3px}
+@media(max-width:600px){.situation-title-logo{width:28px}.situation-autoplay-controls{padding:10px 18px;font-size:11px}}
+
+/* Match the surrounding editorial section headings across breakpoints. */
+.method-controls .play-controls button,.method-header>.outline{font-size:12px;font-weight:400}
+.method-controls .play-controls button{padding:8px 11px}
+@media(min-width:601px) and (max-width:800px){#workspace .method-header h2,.method-header h2{font-size:31px}}

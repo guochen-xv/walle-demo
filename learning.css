@@ -1,0 +1,343 @@
+/* Learning: one typography system, responsive modules, explicit connection gutters. */
+#workspace{padding-top:var(--section-gap);scroll-margin-top:10px;--learning:#487599;--contract:#8066a5;--control:#39877d}
+.learning-heading{display:flex;justify-content:space-between;align-items:center;gap:24px}.learning-heading h2{font-size:32px;color:var(--learning,#a3835c);margin:8px 0}.learning-status{display:flex;justify-content:space-between;gap:16px;font-size:12px;color:#687783;margin:14px 0 24px}
+.learning-board{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:52px 80px;align-items:start}.learning-module{position:relative;z-index:1;min-width:0}.module-kicker{font-size:12px;letter-spacing:1.2px;color:#738393;margin-bottom:8px}.learning-module h3,#demo-module .module-title{font-size:22px;line-height:1.3;letter-spacing:-.5px;font-weight:600;margin:0 0 18px}.module-title{font-size:16px;font-weight:600;line-height:1.5}.task-name{font-size:14px}.inner-module,.skill-lane{border:1px solid #dce4ea;border-radius:12px;padding:20px;background:#fff}.micro-note,.coarse-meta,.refinement-title>span{font-size:12px;color:#677785}
+#demo-module{grid-column:1/-1;padding:18px 20px;border:1px solid #dbe5ed;background:#f3f7fa;border-radius:14px;display:grid;grid-template-columns:1fr auto;gap:0 20px;align-items:center}#demo-module .module-kicker{grid-column:1/-1}#demo-module .module-title{margin-bottom:0}#mini-episodes{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:18px}.mini-episode{min-width:0;background:white;border:1px solid #dde5ec;border-radius:10px;padding:12px}.mini-episode.focus{border-color:#86a7c1;box-shadow:0 2px 10px #48759910}.demo-video-label{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}.demo-video-label strong{font-size:14px;color:#324c62}.demo-video-label span{font-size:12px;color:#697b8c}.episode-views{display:grid;grid-template-columns:1fr 1.6fr 1fr;gap:6px;align-items:center}.episode-views figure{margin:0;min-width:0}.demo-inline-video{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:contain;border-radius:5px;background:#e9eef1}.episode-views figcaption{font-size:12px;text-align:center;color:#657583;margin-top:6px;line-height:1.3}.episode-controls{display:flex;align-items:center;gap:10px;font-size:12px;margin-top:12px;color:#6b7a85}.episode-controls button{padding:4px 10px;border:1px solid #ccd9e3;border-radius:5px;background:#f4f8fb;font-size:12px;min-width:58px}.episode-play-state{margin-left:auto}.episode-focus{grid-column:1/-1;font-size:12px;color:#487599;display:flex;gap:12px;margin-top:12px}.episode-focus span{color:#6b7b86}
+#parsing-module{grid-column:1;grid-row:2}#skills-module{grid-column:2;grid-row:2}.coarse-meta{display:flex;justify-content:space-between;gap:12px;margin:10px 0}.coarse-film{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.coarse-film img{display:block;width:100%;aspect-ratio:4/3;object-fit:contain;border-radius:4px}.coarse-tracks>div{display:flex;gap:7px;align-items:center;margin-top:7px}.coarse-tracks span{font-size:12px;color:#6385a1;width:10px}.coarse-tracks svg{width:calc(100% - 17px);height:28px;overflow:visible}.coarse-tracks path{fill:none;stroke:#648bab;stroke-width:1.3;vector-effect:non-scaling-stroke}.coarse-tracks line{stroke:#a48ac1;stroke-width:1;vector-effect:non-scaling-stroke;stroke-dasharray:2 3}.coarse-clips{display:flex;gap:3px;margin:10px 0}.coarse-clips button{min-width:9px;overflow:hidden;background:#e6edf4;color:#50728f;border-radius:2px;padding:3px 0;font-size:10px;height:23px}.micro-note{display:block;margin-top:8px}.inner-flow{height:46px;position:relative;display:flex;align-items:center;justify-content:center;pointer-events:none}.inner-flow span{position:relative;left:0;transform:translateX(58%);max-width:45%;font-size:12px;color:#8066a5;background:#fafaf8;padding:2px 5px;line-height:1.3}.reasoning-module{display:flex;align-items:center;gap:14px;min-height:86px;background:#f5f1f8;border-color:#ded4e8}.reasoning-symbol{font-size:28px;color:#8066a5}.reasoning-module strong{font-size:16px}.reasoning-module small{display:block;font-size:12px;color:#7b6a8e;margin-top:5px}.refinement-title{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:16px}.semantic-phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:16px 0}.semantic-phases button{padding:10px 3px;border:1px solid #e3dce9;border-radius:7px;background:#faf8fc;color:#8066a5;min-width:0;line-height:1.5}.semantic-phases small{font-size:12px;font-weight:600;display:block}.semantic-phases span{font-size:14px;display:block}.semantic-phases [aria-pressed=true]{background:#ece5f4;border-color:#a48bbc}.semantic-phases .generated-phase{box-shadow:inset 0 -2px #a48bbc}.inline-contract{border-top:1px solid #e7dfed;padding-top:14px}.contract-mini-heading{font-size:14px;color:#8066a5;line-height:1.5}.contract-mini-heading b{font-weight:500}.inline-contract dl{display:grid;grid-template-columns:65px minmax(0,1fr);gap:8px 12px;margin:12px 0 0;font-size:14px;line-height:1.5}.inline-contract dt{color:#78818b}.inline-contract dd{margin:0;color:#434950;overflow-wrap:anywhere}
+.skill-lane{background:#f3f7fb;border-color:#d6e3ed;margin-bottom:20px}.control-lane{background:#f2f7f5;border-color:#d5e4de}.lane-inputs{display:flex;gap:8px;margin:16px 0}.routed-phase{flex:1;display:flex;align-items:center;gap:8px;min-width:0;padding:8px;border:1px solid #dce5ed;background:white;border-radius:7px;text-align:left}.routed-phase img{width:40px;aspect-ratio:4/3;object-fit:contain;border-radius:3px}.routed-phase span{font-size:14px;line-height:1.5}.routed-phase small{display:block;font-size:12px;font-weight:600;color:#4c78a8}.lane-flow{text-align:center;font-size:12px;color:#6d8191;margin:12px 0}.lane-flow:after{content:'↓';display:block;font-size:18px;margin:5px}.model-block{display:grid;grid-template-columns:70px minmax(0,1fr);column-gap:14px;padding:16px;border-radius:9px;background:#e8eff7;align-items:center}.model-block svg{width:70px;grid-row:span 2;fill:#7698b5;stroke:#7698b5;stroke-width:1}.model-block strong{font-size:16px;color:#4b7396;line-height:1.5}.model-block span{font-size:12px;color:#667e93}.skill-output{display:flex;align-items:center;gap:12px;padding-top:14px;margin-top:16px;border-top:1px solid #dce5eb;color:#4c78a8}.skill-output>span{font-size:30px}.skill-output small{display:block;font-size:12px;letter-spacing:.5px;margin-bottom:3px}.skill-output strong{font-size:14px;line-height:1.5}.skill-output svg{width:48px;height:32px;fill:#fff;stroke:#39877d;stroke-width:2}.control-lane .skill-output{color:#39877d;border-color:#d5e4dd}.control-pipeline{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;color:#39877d;font-size:16px}.control-pipeline small{font-size:12px;color:#65827a;display:block;margin-top:5px}.control-pipeline i{font-style:normal}.home-route{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;background:#f2f7f5;border:1px solid #d5e4de;border-radius:10px;color:#39877d;font-size:14px;line-height:1.5}.home-route strong{font-weight:600}.home-route i{font-style:normal}.selected-route{box-shadow:0 0 0 2px #799bb312}.flow-active{outline:2px solid #91b1ca55;outline-offset:4px}
+.learning-connections{position:absolute;top:0;left:0;width:100%;overflow:visible;pointer-events:none;z-index:0}.canvas-flow-path{fill:none;stroke-width:1.5;opacity:.7;stroke-linejoin:round;stroke-linecap:round}.canvas-flow-energy{fill:none;stroke-width:2;stroke-dasharray:4 14}.learning-travel{position:absolute;left:0;top:0;z-index:4;pointer-events:none;opacity:0}.learning-travel span{display:block;transform:translate(-50%,-50%);border:1px solid currentColor;border-radius:5px;background:#fff;padding:5px 8px;white-space:nowrap;font-size:12px;box-shadow:0 3px 9px #31455915}.learning-delivery{position:relative;z-index:1;justify-self:center;text-align:center;font-size:12px;background:#fafaf8;color:#8066a5;padding:4px 10px;max-width:90%}.learning-delivery>span{display:none}#parsing-delivery{grid-column:1;grid-row:3}#skills-delivery{grid-column:2;grid-row:3;color:#39877d}.learning-footnote{display:flex;justify-content:space-between;gap:20px;margin-top:18px;font-size:12px;line-height:1.5;color:#69757f}.learning-footnote>*{max-width:46%;background:#fafaf8;position:relative;z-index:1}.tour-track{margin-top:16px}.motion-off .canvas-flow-energy{display:none}.situation-bridge-label{position:relative;z-index:1;display:table;margin:0 auto 12px;background:#fafaf8}.situation-section{position:relative}.learning-module div.module-title,.learning-module div.reasoning-module{cursor:default}
+@media(min-width:1000px) and (max-width:1350px){.routed-phase{flex-direction:column;align-items:flex-start}.routed-phase img{width:48px}.inner-module,.skill-lane{padding:18px}.episode-views{gap:4px}}
+@media(max-width:999px){.learning-board{display:flex;flex-direction:column;gap:52px;padding:0 12px}.learning-module{width:100%}.learning-delivery{display:none}.learning-heading{flex-wrap:wrap}.learning-footnote{flex-direction:column}.learning-footnote>*{max-width:100%}#mini-episodes{grid-template-columns:1fr}.demo-video-label{flex-direction:row;justify-content:space-between}.episode-views{gap:10px}.episode-views figure{max-width:100%}.learning-section .wrap{width:auto}.inner-flow span{font-size:12px}.episode-focus{flex-wrap:wrap}.home-route{flex-wrap:wrap}}
+@media(max-width:520px){.learning-heading h2{font-size:32px}.learning-status{flex-direction:column;gap:5px}#demo-module{padding:18px;grid-template-columns:1fr}#demo-module .task-name{margin-top:8px}#mini-episodes{margin-top:16px;gap:16px}.demo-video-label{flex-direction:column}.episode-views{gap:4px}.episode-views figcaption{font-size:12px;min-height:32px}.episode-controls{gap:8px;flex-wrap:wrap}.learning-board{padding:0 8px}.inner-module,.skill-lane{padding:18px}.semantic-phases{gap:3px}.semantic-phases span{font-size:14px;overflow-wrap:anywhere}.routed-phase{flex-direction:column;align-items:flex-start;padding:7px}.routed-phase img{width:38px}.routed-phase span{font-size:14px;overflow-wrap:anywhere}.model-block{grid-template-columns:1fr;gap:8px}.inline-contract dl{grid-template-columns:48px minmax(0,1fr);column-gap:8px}.refinement-title{flex-wrap:wrap}.inner-flow{height:62px}.inner-flow span{transform:translateX(58%);max-width:46%}.control-pipeline{flex-wrap:wrap}.coarse-meta{flex-wrap:wrap}.learning-heading .play-controls{flex-wrap:wrap}.module-kicker{letter-spacing:.8px}}
+/* Focused demonstration gallery: quiet side previews, selected card in front. */
+#demo-module{background:transparent;border:0;padding:8px 0 0;border-radius:0}
+#mini-episodes{display:block;position:relative;height:340px;margin:30px 0 12px;perspective:1200px;isolation:isolate}
+#mini-episodes .mini-episode{position:absolute;left:50%;top:50%;width:68%;margin:0;padding:14px;background:#fff;border:1px solid #dce4ea;border-radius:14px;cursor:default;transform-origin:center;transition:transform .55s cubic-bezier(.22,.68,.2,1),opacity .55s,filter .55s,box-shadow .55s;box-shadow:0 8px 22px #26374518;overflow:hidden}
+#mini-episodes .mini-episode[data-position=center]{transform:translate(-50%,-50%);z-index:3;opacity:1;filter:none;box-shadow:0 18px 42px #26374528}
+#mini-episodes .mini-episode[data-position=left]{transform:translate(-85%,-50%) scale(.65) rotateY(10deg);z-index:1;opacity:.43;filter:saturate(.5)}
+#mini-episodes .mini-episode[data-position=right]{transform:translate(-15%,-50%) scale(.65) rotateY(-10deg);z-index:1;opacity:.43;filter:saturate(.5)}
+
+#mini-episodes .episode-views{gap:12px;pointer-events:none}
+#mini-episodes figcaption{font-size:12px;color:#82909b}
+#mini-episodes .mini-episode:not(.focus) figcaption{opacity:0}
+#mini-episodes .mini-episode:focus-visible{outline:3px solid #8066a5;outline-offset:4px}
+#demo-module.flow-active{outline:none}
+@media(min-width:1600px){#mini-episodes{height:370px}}
+@media(max-width:1100px){#mini-episodes{height:285px}#mini-episodes .mini-episode{padding:10px;width:72%}#mini-episodes .episode-views{gap:6px}}
+@media(max-width:999px){#mini-episodes{height:310px}#demo-module{padding:8px 0}.learning-board{padding:0 12px}}
+@media(max-width:520px){#mini-episodes{height:180px;margin-top:20px}#mini-episodes .mini-episode{width:78%;padding:6px;border-radius:9px}#mini-episodes .mini-episode[data-position=left]{transform:translate(-80%,-50%) scale(.68) rotateY(8deg)}#mini-episodes .mini-episode[data-position=right]{transform:translate(-20%,-50%) scale(.68) rotateY(-8deg)}#mini-episodes .episode-views{gap:3px}#mini-episodes figcaption{display:none}}
+@media(prefers-reduced-motion:reduce){#mini-episodes .mini-episode{transition:none}}
+.motion-off #mini-episodes .mini-episode{transition:none}
+
+#mini-episodes .demo-task{font-size:14px;line-height:1.5;text-align:right;margin:0 2px 10px;color:#6b7782;pointer-events:none}#mini-episodes .demo-task strong{color:#334a5b;font-weight:600}#mini-episodes .mini-episode:not(.focus) .demo-task{visibility:hidden}@media(max-width:520px){#mini-episodes .demo-task{font-size:12px;margin:0 2px 6px}}
+
+.learning-packets{position:absolute;inset:0;pointer-events:none;z-index:4}.motion-off .learning-packets{display:none}
+
+.vla-original-art{display:block;width:100%;max-width:560px;height:auto;margin:20px auto;object-fit:contain}.vla-original-note{text-align:center;font-size:12px;color:#6b6b6b;margin:8px 0 16px}
+
+/* Native VLA diagram and phase-to-model inputs. */
+#vla-lane{position:relative;isolation:isolate}
+#vla-inputs{gap:12px;margin:18px 0 0}
+#vla-inputs .routed-phase{display:flex;flex-direction:column;align-items:stretch;gap:0;padding:0;overflow:hidden;background:#fff;border-radius:8px}
+#vla-inputs .routed-phase img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:contain;background:#edf2f6;border-radius:0}
+#vla-inputs .routed-phase>span{display:block;padding:10px 8px;border-top:1px solid #d6e3ed;font-size:14px;line-height:1.5}
+#vla-inputs .routed-phase small{display:inline;color:#4c78a8;font-size:14px;font-weight:600;margin-right:6px}
+.vla-input-description{font-size:12px;color:#6b7782;text-align:center;margin:42px 0 12px}
+.vla-native-model{margin:0 0 48px 30px}
+.vla-native-model .vla-original-art{display:block;width:100%;max-width:none;height:auto;margin:0;overflow:visible;font-family:inherit}
+.vla-input-connections{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:-1;overflow:visible}
+.vla-input-wire{fill:none;stroke:#4c78a8;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+.vla-input-dot{fill:#4c78a8}.motion-off .vla-input-dot{display:none}
+@media(prefers-reduced-motion:reduce){.vla-input-dot{display:none}}
+@media(max-width:520px){#vla-inputs{gap:6px}#vla-inputs .routed-phase>span{padding:8px 5px}.vla-native-model{margin-left:22px}}
+
+/* Phase demonstrations feed the model from below. */
+.vla-native-model{margin:24px 0 0}
+#vla-inputs{margin:54px 0 0}
+.vla-input-description{position:relative;z-index:1;display:table;background:#f3f7fb;margin:12px auto -28px;padding:0 8px}
+.vla-original-note{margin-top:16px}
+@media(max-width:520px){.vla-native-model{margin-left:0}}
+
+.vla-input-description{margin:12px auto 0}
+
+#vla-lane>.module-title{color:#426D91;font-weight:600}
+
+/* Learning typography follows the site's section hierarchy. */
+#workspace .learning-heading h2{font-size:36px;line-height:1.2;margin-top:13px}
+#workspace .learning-module h3,#workspace #demo-module .module-title{font-size:26px;line-height:1.3}
+#workspace .module-title,#workspace .reasoning-module strong,#workspace .refinement-title{font-size:18px;line-height:1.5}
+#workspace .semantic-phases span,#workspace .contract-mini-heading,#workspace .inline-contract dl,#workspace .routed-phase span,#workspace #vla-inputs .routed-phase>span,#workspace .skill-output strong{font-size:16px;line-height:1.5}
+#workspace .inline-contract dl{grid-template-columns:72px minmax(0,1fr);gap:10px 14px}
+#workspace .module-kicker,#workspace .micro-note,#workspace .coarse-meta,#workspace .refinement-title>span,#workspace .reasoning-module small,#workspace .semantic-phases small,#workspace .skill-output small,#workspace .control-pipeline small,#workspace .learning-status,#workspace .learning-footnote,#workspace .learning-delivery{font-size:13px;line-height:1.5}
+#workspace #vla-inputs .routed-phase small{font-size:14px}
+#workspace .control-pipeline{font-size:18px}
+#workspace .inner-module,#workspace .skill-lane{padding:24px}
+#workspace .inner-flow{height:54px}
+#workspace .reasoning-module{min-height:96px}
+#workspace .coarse-meta{flex-wrap:wrap}
+@media(max-width:1100px){#workspace .learning-module h3,#workspace #demo-module .module-title{font-size:24px}#workspace .inner-module,#workspace .skill-lane{padding:20px}}
+@media(max-width:800px){#workspace .learning-heading h2{font-size:31px}}
+@media(max-width:520px){#workspace .learning-heading h2{font-size:29px}#workspace .learning-module h3,#workspace #demo-module .module-title{font-size:22px}#workspace .inner-module,#workspace .skill-lane{padding:18px}#workspace .inline-contract dl{grid-template-columns:60px minmax(0,1fr);gap:10px}#workspace #vla-inputs .routed-phase>span{font-size:14px}#workspace .semantic-phases span{font-size:14px}}
+
+/* Compact phase cards aligned directly with the VLA input body. */
+#workspace #vla-inputs{gap:8px;max-width:100%;align-items:stretch}
+#workspace #vla-inputs .routed-phase img{aspect-ratio:4/3}
+#workspace #vla-inputs .routed-phase>span{font-size:14px;padding:8px 6px;line-height:1.4}
+#workspace #vla-inputs .routed-phase small{font-size:12px;margin-right:4px}
+@media(max-width:520px){#workspace #vla-inputs{gap:4px}#workspace #vla-inputs .routed-phase>span{font-size:12px;padding:6px 3px}#workspace #vla-inputs .routed-phase small{font-size:11px}}
+
+/* Balance the diagram, examples and prepared skill in one compact composition. */
+#workspace #vla-lane .vla-native-model{margin-top:14px}
+/* Semantic refinement: actual phase video with aligned raw gripper evidence. */
+#workspace #semantic-phases{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0 0}
+.semantic-video-card{min-width:0;border:1px solid #e3dce9;border-radius:9px;overflow:hidden;background:#fff}
+#workspace .semantic-video-card>button{width:100%;display:flex;align-items:center;gap:8px;border:0;border-bottom:1px solid #e3dce9;border-radius:0;text-align:left;padding:10px 12px;min-height:64px}
+#workspace .semantic-video-card>button small{font-size:13px;flex-shrink:0}
+#workspace .semantic-video-card>button span{font-size:15px;line-height:1.4}
+.phase-preview-video{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:contain;background:#f0f3f6}
+.phase-gripper-evidence{padding:10px 8px 0}.phase-gripper-row{display:flex;align-items:center;gap:5px;margin:4px 0}.phase-gripper-row>span{font-size:11px;color:#6385a1;width:10px;flex-shrink:0}
+.phase-gripper-row svg{display:block;width:calc(100% - 15px);height:24px;overflow:visible}
+.phase-gripper-row path{fill:none;stroke:#648bab;stroke-width:1.2;vector-effect:non-scaling-stroke}.phase-cut{stroke:#a48ac1;stroke-width:1;stroke-dasharray:2 3;vector-effect:non-scaling-stroke}.phase-video-cursor{stroke:#8066a5;stroke-width:1.5;vector-effect:non-scaling-stroke}
+.phase-coarse-segments{display:flex;gap:2px;margin:6px 0 0 15px}.phase-coarse-segments span{min-width:6px;text-align:center;background:#e6edf4;color:#50728f;border-radius:2px;font-size:10px;padding:3px 0;overflow:hidden}
+.phase-frame-caption{padding:9px 10px 12px;font-size:12px;color:#687783;line-height:1.5}.phase-video-error{font-size:12px;color:#b96b5f;padding:8px}
+#phase-video-toggle{font:inherit;font-size:12px;color:#8066a5;background:#f5f1f8;border:1px solid #ded4e8;border-radius:6px;padding:6px 9px;white-space:nowrap}
+@media(max-width:520px){#workspace #semantic-phases{gap:10px}#workspace .semantic-video-card>button{padding:8px;gap:5px}#workspace .semantic-video-card>button span{font-size:14px}.phase-frame-caption{font-size:11px;padding:8px}}
+#workspace .phase-gripper-row>span{font-size:11px;line-height:1}
+#workspace .phase-coarse-segments span{font-size:10px;line-height:1.4}
+
+/* One selected phase preview beneath the compact four-phase selector. */
+#workspace #semantic-phases{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:16px 0}
+#semantic-preview .semantic-video-card[hidden]{display:none}
+#semantic-preview .semantic-video-card{border:0;border-radius:8px}
+#semantic-preview .phase-preview-video{max-height:280px;aspect-ratio:4/3}
+#semantic-preview .phase-gripper-evidence{padding:12px 0 0}
+#semantic-preview .phase-frame-caption{padding:10px 0 0}
+
+/* Synchronized left wrist / larger main camera / right wrist. */
+.phase-three-views{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,1fr);gap:8px;align-items:center;background:#f3f6f8;padding:8px;border-radius:8px}
+#semantic-preview .phase-three-views .phase-preview-video{width:100%;height:auto;max-height:none;min-width:0;aspect-ratio:4/3;object-fit:contain;border-radius:5px}
+@media(max-width:520px){.phase-three-views{gap:4px;padding:4px}}
+
+/* Coarse evidence shares one frame axis; phase images belong in refinement. */
+#coarse-tracks{padding-top:8px}
+#coarse-tracks>div{margin-top:12px}
+#coarse-tracks svg{height:38px;flex:none}
+#coarse-tracks span{flex:0 0 10px}
+#coarse-clips{position:relative;display:block;gap:0;height:26px;margin:16px 0 0 17px}
+#coarse-clips button{position:absolute;top:0;height:26px;min-width:0;border:0;border-right:1px solid #fff;border-radius:0;overflow:visible;padding:0;font-size:10px}
+#coarse-clips button:nth-child(even){background:#dce7f1}
+#coarse-clips button span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+.coarse-frame-axis{display:flex;justify-content:space-between;margin:7px 0 12px 17px;font-size:11px;color:#738393}
+
+/* Cohesive gripper-event timeline. */
+#workspace #coarse-module{padding:24px}
+#coarse-module .coarse-meta{margin:8px 0 18px;align-items:center}
+#coarse-count{background:#edf3f8;color:#527591;border:1px solid #dce7ef;border-radius:20px;padding:4px 10px;font-size:12px}
+.coarse-signal-panel{background:#f4f7fa;border:1px solid #e1e9f0;border-radius:10px;padding:14px 14px 4px}
+#coarse-tracks{padding:0}
+#coarse-tracks>div{gap:10px;margin:0 0 13px;align-items:center}
+#coarse-tracks>div:last-child{margin-bottom:0}
+#coarse-tracks span{display:grid;place-items:center;flex:0 0 20px;height:22px;border-radius:5px;background:#e3edf5;color:#4c78a8;font-size:11px;font-weight:600}
+#coarse-tracks svg{width:calc(100% - 30px);height:42px;background:repeating-linear-gradient(to right,transparent 0,transparent calc(20% - 1px),#dfe8f0 20%),linear-gradient(to bottom,transparent 49%,#e2eaf1 50%,transparent 51%);border-bottom:1px solid #dce5ed}
+#coarse-tracks path:not(.coarse-signal-area){stroke:#6389aa;stroke-width:1.6}
+#coarse-tracks path.coarse-signal-area{fill:#7b9fbc;fill-opacity:.12;stroke:none}
+#coarse-tracks line{stroke:#a48bb8;opacity:.65;stroke-dasharray:2 4}
+#coarse-clips{margin:16px 0 0 30px;height:28px}
+#coarse-clips button{height:28px;background:#e2ebf3;color:#466b8b;border-right:2px solid #f4f7fa}
+#coarse-clips button:nth-child(even){background:#d5e3ee}
+#coarse-clips button:first-child{border-radius:4px 0 0 4px}#coarse-clips button:last-child{border-radius:0 4px 4px 0;border-right:0}
+#coarse-clips button:hover,#coarse-clips button:focus-visible{background:#b9cee0;color:#294f70}
+.coarse-frame-axis{margin:8px 0 7px 30px;font-size:10px;color:#8091a0}
+#coarse-module .micro-note{margin-top:12px;font-size:12px;color:#82909c}
+@media(max-width:520px){#workspace #coarse-module{padding:18px}.coarse-signal-panel{padding:12px 8px 4px}}
+
+/* Paused/reduced motion keeps the current data position readable. */
+.motion-off .learning-packets{display:block}
+.motion-off .vla-input-dot{display:block}
+
+/* Motion off hides travelling data cards; structural connections remain. */
+.motion-off .learning-packets,.motion-off .vla-input-dot{display:none}
+
+/* Phase prompts are part of the selector, rather than oversized anonymous tabs. */
+#workspace #refinement-module{padding:20px}
+#workspace #semantic-phases{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:12px 0}
+#workspace #semantic-phases button{padding:9px 10px;text-align:left;border:1px solid #e4e8ed;border-radius:8px;background:#fafbfc;color:#171717;box-shadow:none;transition:background .15s,border-color .15s}
+#workspace #semantic-phases button[aria-pressed=true]{background:#edf3f9;border-color:#7e9fbc;box-shadow:inset 3px 0 #4c78a8}
+#workspace #semantic-phases .phase-option-heading{display:flex;align-items:center;gap:7px;line-height:1.3;font-size:14px}
+#workspace #semantic-phases small{display:inline;font-size:12px;color:#4c78a8;font-weight:600}
+#workspace #semantic-phases strong{font-size:14px;font-weight:600}
+#workspace #semantic-phases em{margin-left:auto;font-size:10px;font-style:normal;font-weight:500;color:#738391}
+#workspace #semantic-phases .phase-option-prompt{display:block;margin-top:5px;font-size:13px;line-height:1.4;color:#64717d}
+#workspace #semantic-phases button[aria-pressed=true] .phase-option-prompt{color:#3b5c78}
+#semantic-preview .phase-three-views{padding:5px;gap:6px;background:#f3f5f7;border-radius:7px;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr) minmax(0,1fr)}
+#semantic-preview .phase-gripper-evidence{padding:7px 0 0}
+#semantic-preview .phase-gripper-row{margin:3px 0}
+#semantic-preview .phase-gripper-row svg{height:19px}
+#semantic-preview .phase-coarse-segments{margin-top:4px}
+#semantic-preview .phase-coarse-segments span{padding:1px 0}
+#semantic-preview .phase-frame-caption{padding:6px 0 0;font-size:11px;color:#81909c}
+#workspace #phase-video-toggle{background:transparent;border-color:#e2e7ed;color:#6a7d8e;font-size:11px;padding:4px 7px}
+@media(max-width:520px){#workspace #refinement-module{padding:16px}#workspace #semantic-phases strong{font-size:13px}#workspace #semantic-phases .phase-option-prompt{font-size:12px}#workspace #semantic-phases button{padding:8px}#workspace #semantic-phases em{display:none}}
+
+/* Keep navigation concise; the prompt belongs to its selected phase. */
+#workspace #semantic-phases{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0 8px}
+#workspace #semantic-phases button{padding:9px 8px}
+#workspace #semantic-phases .phase-option-heading{flex-wrap:wrap;gap:4px 6px}
+#workspace #semantic-phases em{display:none}
+#workspace #semantic-phases strong{font-size:13px}
+.phase-preview-prompt{padding:9px 0 12px;display:flex;align-items:baseline;gap:10px}
+.phase-preview-prompt small{font-size:10px;letter-spacing:.8px;color:#7b8c9b;flex-shrink:0}
+.phase-preview-prompt p{margin:0;font-size:14px;line-height:1.5;color:#3b5c78}
+@media(max-width:520px){#workspace #semantic-phases button{padding:8px 6px}#workspace #semantic-phases strong{font-size:12px}.phase-preview-prompt{gap:8px}.phase-preview-prompt p{font-size:13px}}
+
+/* Motion toggles travelling labels, not the VLA playback sequence. */
+.motion-off .vla-input-dot{display:block}
+@media(prefers-reduced-motion:reduce){.motion-off .vla-input-dot{display:none}}
+
+/* Playback determines visibility of external flow, independently of Motion. */
+body:not(.learning-paused) .learning-packets{display:block}
+body:not(.learning-paused) .canvas-flow-energy{display:block}
+body.learning-paused .learning-packets,body.learning-paused .canvas-flow-energy,body.learning-paused .vla-input-dot{display:none}
+
+/* A short entrance transition keeps phase changes readable without delaying playback. */
+#semantic-preview .semantic-video-card:not([hidden]){animation:phase-preview-enter 420ms cubic-bezier(.2,.7,.3,1) both}
+@keyframes phase-preview-enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+#workspace #semantic-phases button{transition:background-color 180ms ease,border-color 180ms ease,box-shadow 180ms ease,color 180ms ease}
+@media(prefers-reduced-motion:reduce){#semantic-preview .semantic-video-card:not([hidden]){animation:none}#workspace #semantic-phases button{transition:none}}
+
+
+.reasoning-model-logos{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.reasoning-model-logos img{display:block;width:27px;height:27px;object-fit:contain}
+.reasoning-model-logos>span{color:#c2b8cc;font-size:17px;font-weight:300}
+@media(max-width:520px){.reasoning-model-logos{gap:6px}.reasoning-model-logos img{width:23px;height:23px}#workspace .reasoning-module{gap:12px}}
+
+/* Situation Parsing uses the shared Situation purple palette. */
+#parsing-module{--parsing-accent:#8066a5;--parsing-ink:#66517f;--parsing-line:#e2d9eb;--parsing-wash:#f7f4fa}
+#parsing-module .inner-module{border-color:var(--parsing-line)}
+#parsing-module .flow-active{outline-color:#a48bbc55}
+#parsing-module .coarse-meta,#parsing-module .micro-note,#parsing-module .phase-frame-caption,#parsing-module .coarse-frame-axis{color:#8a7c98}
+#parsing-module #coarse-count{background:#f1ebf6;color:var(--parsing-ink);border-color:var(--parsing-line)}
+#parsing-module .coarse-signal-panel{background:var(--parsing-wash);border-color:#e8e0ef}
+#parsing-module #coarse-tracks span{background:#ece4f3;color:var(--parsing-accent)}
+#parsing-module #coarse-tracks svg{background:repeating-linear-gradient(to right,transparent 0,transparent calc(20% - 1px),#e8dfef 20%),linear-gradient(to bottom,transparent 49%,#e8dfef 50%,transparent 51%);border-bottom-color:var(--parsing-line)}
+#parsing-module #coarse-tracks path:not(.coarse-signal-area),#parsing-module .phase-gripper-row path{stroke:var(--parsing-accent)}
+#parsing-module #coarse-tracks path.coarse-signal-area{fill:#a48bbc}
+#parsing-module #coarse-clips button{background:#eae2f2;color:var(--parsing-ink);border-right-color:var(--parsing-wash)}
+#parsing-module #coarse-clips button:nth-child(even){background:#dfd3eb}
+#parsing-module #coarse-clips button:hover,#parsing-module #coarse-clips button:focus-visible{background:#cdbbdd;color:#513b6a}
+#workspace #parsing-module #semantic-phases button{background:#fcfafd;border-color:#e8e0ee}
+#workspace #parsing-module #semantic-phases button[aria-pressed=true]{background:#f0e9f6;border-color:#a48bbc;box-shadow:inset 3px 0 #8066a5}
+#workspace #parsing-module #semantic-phases small,#parsing-module .phase-gripper-row>span{color:var(--parsing-accent)}
+#parsing-module .phase-preview-prompt small{color:#91809f}
+#parsing-module .phase-preview-prompt p{color:var(--parsing-ink)}
+#parsing-module .phase-three-views,#parsing-module .phase-preview-video{background:var(--parsing-wash)}
+#parsing-module .phase-coarse-segments span{background:#eae2f2;color:var(--parsing-ink)}
+#parsing-module .refinement-title button{color:var(--parsing-ink);border-color:var(--parsing-line)}
+
+/* Skill construction: a shared title / study / artifact layout. */
+#workspace #vla-lane,#workspace #control-lane{background:#fff;border:1px solid #dfe5e5;border-radius:14px;padding:24px;outline:none;box-shadow:none}
+#workspace #vla-lane>.module-title,#workspace #control-lane>.module-title{font-size:18px;font-weight:600;color:#252b30;line-height:1.5}
+.vla-model-heading{text-align:center;font-size:14px;font-weight:500;line-height:1.5;color:#536a7c;margin:22px auto 12px;max-width:430px}
+#workspace #vla-lane .vla-native-model{width:90%;margin:8px auto 0}
+.vla-original-art .vla-model-loop{stroke-width:.7}
+.vla-preparation-row{display:block;margin-top:12px}
+#workspace .vla-preparation-row #vla-inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0;max-width:none}
+#workspace #vla-inputs .routed-phase{border:1px solid #e1e8ed;border-radius:8px;box-shadow:none}
+#workspace #vla-inputs .routed-phase img{aspect-ratio:16/10;background:#f5f7f9}
+#workspace #vla-inputs .routed-phase>span{padding:8px;font-size:14px;line-height:1.4;border-top:1px solid #edf0f3;color:#252b30}
+#workspace #vla-inputs .routed-phase small{font-size:12px;color:#4c78a8}
+#workspace #vla-lane>.skill-output,#workspace #control-lane>.skill-output{display:flex;align-items:center;gap:12px;min-height:60px;margin:18px 0 0;padding:10px 14px;border:1px solid #e5e9eb;border-radius:8px;background:#f8fafb;box-sizing:border-box;opacity:1}
+#workspace #vla-lane>.skill-output>svg,#workspace #control-lane>.skill-output>svg{flex:0 0 42px;width:42px;height:30px;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+#workspace #vla-lane>.skill-output>svg{stroke:#4c78a8}
+#workspace #control-lane>.skill-output>svg{stroke:#39877d}
+#workspace #vla-lane>.skill-output strong,#workspace #control-lane>.skill-output strong{font-size:14px;font-weight:600;line-height:1.4;color:#252b30}
+#workspace #vla-lane>.skill-output small,#workspace #control-lane>.skill-output small{display:block;font-size:12px;line-height:1.4;letter-spacing:0;margin:3px 0 0;color:#748078}
+#workspace #control-lane>.material-complete{border-color:#c9ddd3;background:#f5faf7}
+.control-capture{display:grid;grid-template-columns:minmax(0,2fr) minmax(125px,1fr);gap:20px;align-items:center;margin-top:22px}
+.control-media{position:relative;min-width:0}
+.control-footage{position:relative;overflow:hidden;border-radius:9px;background:#eff3f1;aspect-ratio:4/3}
+.control-footage video{width:100%;height:100%;object-fit:contain}
+#control-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#control-overlay path{fill:none;stroke:#39877d;stroke-width:.55;stroke-linecap:round;stroke-linejoin:round}
+#control-overlay .control-trace-base{opacity:0}
+.control-keypoint circle{fill:#39877d;stroke:#fff;stroke-width:.3}
+.control-keypoint text{font:600 2.5px 'Helvetica Neue',Helvetica,Arial,sans-serif;text-anchor:middle;fill:#fff}
+.control-keypoint line{stroke:#39877d;stroke-width:.35;stroke-dasharray:1 1}
+#control-inputs{position:relative;display:flex;margin:0;justify-content:flex-end;padding:0;flex-shrink:0}
+#control-inputs .routed-phase{flex:0 1 auto;flex-direction:row;align-items:center;justify-content:center;padding:5px 9px;border:0;background:#eaf3f0;border-radius:7px;box-shadow:none}
+#control-inputs .routed-phase img{display:none}
+#workspace #control-inputs .routed-phase span{display:flex;align-items:center;gap:7px;font-size:14px;line-height:1.5;color:#252b30}
+#control-inputs .routed-phase small{display:inline;color:#39877d}
+#control-records{list-style:none;padding:0;margin:0;display:grid;gap:24px}
+#control-records li{display:flex;align-items:center;gap:10px;position:relative;min-width:0}
+#control-records li>.control-step-icon{position:relative;display:grid;place-items:center;width:34px;height:38px;flex:0 0 34px;color:#9aada7}
+.control-step-icon svg{width:28px;height:32px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.control-step-icon .icon-guide{stroke-dasharray:2 2;opacity:.6}
+.control-step-icon b{position:absolute;bottom:-3px;right:-3px;width:14px;height:14px;display:grid;place-items:center;background:#eef2f0;border:2px solid #fff;border-radius:50%;color:#748078;font-size:9px;font-weight:600;line-height:1}
+#control-records .recorded>.control-step-icon{color:#39877d}
+#control-records .recorded .control-step-icon b{background:#39877d;color:#fff}
+#control-records strong{display:block;font-size:14px;font-weight:600;line-height:1.5;color:#252b30}
+#control-records small{display:block;font-size:12px;line-height:1.4;color:#748078;margin-top:3px}
+@media(max-width:520px){#workspace #vla-lane,#workspace #control-lane{padding:18px}.control-capture{grid-template-columns:1fr;gap:20px}#control-records{gap:18px}.vla-model-heading{font-size:14px;max-width:240px}.vla-preparation-row{margin-top:12px}#workspace .vla-preparation-row #vla-inputs{gap:6px}#workspace #vla-inputs .routed-phase>span{font-size:12px;padding:7px 5px}#workspace #vla-inputs .routed-phase small{font-size:11px}}
+/* Keep decorative routes within the narrow viewport. */
+@media(max-width:520px){body{overflow-x:clip}.knowledge-grid{min-width:0}.knowledge-grid>div{min-width:0;overflow-wrap:anywhere}}
+
+/* The three phase demonstrations form one shared VLA input. */
+#workspace .vla-preparation-row #vla-inputs{padding:12px;border:1px solid #d6e3ed;border-radius:10px;background:#f7fafc;box-sizing:border-box}
+@media(max-width:520px){#workspace .vla-preparation-row #vla-inputs{padding:8px;gap:6px}}
+
+@media(max-width:520px){#workspace #vla-lane .vla-native-model{width:100%}}
+/* Balance the control preview against its three-step legend. */
+#control-lane .control-capture{grid-template-columns:minmax(0,260px) minmax(130px,170px);justify-content:space-between;gap:24px;align-items:center;padding:0 8px}
+#control-lane #control-records{gap:22px}
+@media(max-width:1200px) and (min-width:521px){#control-lane .control-capture{grid-template-columns:minmax(0,1.45fr) minmax(120px,1fr);gap:18px;padding:0}}
+@media(max-width:520px){#control-lane .control-capture{grid-template-columns:1fr;justify-items:center;padding:0;gap:20px}#control-lane .control-media{width:100%;max-width:260px}#control-lane #control-records{width:100%;max-width:260px}}
+#control-lane .control-capture{justify-content:center;gap:16px;background:#eaf3f0;border-radius:12px;padding:14px 12px}
+@media(max-width:1200px) and (min-width:521px){#control-lane .control-capture{gap:16px}}
+
+/* Readable image-space waypoints in the compact control preview. */
+#control-overlay .control-keypoint circle{stroke-width:.45}
+#control-overlay .control-keypoint text{font-size:3.4px;font-weight:700}
+#control-overlay .control-keypoint line{stroke-width:.45}
+
+/* Learning overview: fixed routing channel and consistent visual hierarchy. */
+.learning-board{column-gap:120px;row-gap:24px}
+#mini-episodes{margin-bottom:14px}
+#workspace #parsing-module .inner-module{padding:24px;border:1px solid #e2d9eb;outline:none;box-shadow:none}
+#workspace #parsing-module .flow-active{outline:none;box-shadow:none}
+#workspace .inner-flow{height:36px}
+#workspace .learning-module h3{font-size:26px;line-height:1.3}
+#workspace .module-title,#workspace .reasoning-module strong,#workspace .refinement-title{font-size:18px}
+#workspace .semantic-phases span,#workspace .inline-contract dl{font-size:14px}
+#workspace .module-kicker,#workspace .micro-note,#workspace .coarse-meta,#workspace .reasoning-module small,#workspace .learning-delivery{font-size:12px}
+#skills-module .skill-lane{margin-bottom:20px}
+#skills-module .skill-lane:last-child{margin-bottom:0}
+#skills-delivery{color:#8066a5}
+.canvas-flow-path{stroke-width:1.5;opacity:.6;stroke-linejoin:round;stroke-linecap:round}
+.canvas-flow-energy{stroke-width:1.5}
+.learning-travel span{font-size:11px;padding:4px 6px;box-shadow:none;border-color:currentColor}
+.compact-routing{display:none}
+@media(max-width:1199px){
+ .learning-board{display:flex;flex-direction:column;gap:24px;padding:0 12px}
+ .learning-module{width:100%}
+ .learning-delivery{display:none}
+ .compact-routing{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 22px;margin:0 0 28px;padding:10px 12px;background:#f8f7fa;border:1px solid #e4dfea;border-radius:8px;font-size:12px;line-height:1.5}
+ .compact-routing span:first-child{color:#4c78a8}.compact-routing span:last-child{color:#39877d}
+ #skills-module #control-lane{margin-top:32px}
+ .learning-travel.compact-packet span{display:none}
+ .learning-travel.compact-packet:after{content:'';display:block;width:5px;height:5px;background:currentColor;border-radius:50%;transform:translate(-50%,-50%)}
+}
+@media(max-width:520px){#workspace #parsing-module .inner-module{padding:18px}.learning-board{padding:0 8px}.compact-routing{gap:5px 14px;font-size:11px}}
+
+/* Task identity shares the heading row instead of adding an empty band. */
+.control-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#control-lane .control-heading + .control-capture{margin-top:14px}
+#workspace .control-heading .module-title{margin:0}
+#workspace .control-heading #control-inputs .routed-phase span{font-size:12px;gap:6px}
+
+/* Compact Learning → Situation handoff. Labels do not occupy a grid row. */
+#offline-view .learning-delivery{position:absolute;grid-area:auto;justify-self:auto;max-width:none;padding:0;background:var(--bg);font-size:12px;line-height:1.5;white-space:nowrap;color:#8066a5}
+section#situation.situation-section{padding-top:88px}
+@media(max-width:1199px){section#situation.situation-section{padding-top:64px}}
+
+

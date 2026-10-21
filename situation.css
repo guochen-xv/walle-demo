@@ -1,0 +1,126 @@
+/* Situation: task header, phase navigation and an equal-height reference workspace. */
+.situation-sheet{--sit-purple:#8066a5;--sit-line:#eae5ee;background:#fff;border:1px solid #e3dce9;border-radius:16px;overflow:hidden}
+.situation-sheet .situation-summary{display:block;padding:20px 24px!important;background:#fcfafd;border:0;border-radius:0}
+.situation-summary h2{font-size:26px;margin:5px 0;color:#3f334b}
+.situation-summary p{font-size:14px;line-height:1.5}
+.situation-dependencies{padding:10px 24px;border-top:1px solid var(--sit-line);color:#82768b;font-size:12px;line-height:1.5}
+.situation-section:not(.expanded) #phase-cards{display:grid}
+.situation-sheet .phase-cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:0;border-block:1px solid var(--sit-line)}
+.situation-sheet .phase-card{display:grid;grid-template-columns:1fr auto;align-items:center;gap:5px 10px;position:relative;border:0;border-radius:0;background:white;min-height:0;padding:14px 22px;text-align:left;box-shadow:none}
+.situation-sheet .phase-card small{grid-column:1/-1;font-size:10px;letter-spacing:1px;color:#978ba0}
+.situation-sheet .phase-card h4{margin:0;font-size:16px;font-weight:500}
+.situation-sheet .phase-card .route{justify-self:end;font-size:10px}
+.situation-sheet .phase-card:not(:last-child):after{content:'→';position:absolute;right:-5px;top:29px;color:#c2b8cb;z-index:1}
+.situation-sheet .phase-card.selected{background:#f5f1f9;box-shadow:inset 0 -3px var(--sit-purple)}
+.situation-sheet .phase-card.selected h4{color:#644c80}
+.situation-sheet button:focus-visible{outline:2px solid var(--sit-purple);outline-offset:-4px}
+.situation-sheet .phase-detail{display:block;border:0;border-radius:0;margin:0;padding:24px;min-height:0;background:#fff}
+.situation-columns{display:grid;grid-template-columns:minmax(0,55fr) minmax(0,45fr);gap:28px;align-items:stretch;min-height:var(--situation-content-height,0px)}
+.situation-visual-column,.situation-contract-column{min-width:0}
+.situation-visual-column{display:flex;flex-direction:column}
+.situation-contract-column{align-self:start}
+.situation-phase-intro{display:flex;align-items:baseline;gap:16px;margin-bottom:20px}
+.situation-phase-intro .eyebrow{display:none}
+.situation-phase-intro h3{font-size:22px;white-space:nowrap;color:#302735;margin:0;line-height:1.3}
+.situation-phase-intro p{font-size:15px;line-height:1.5;border-left:1px solid var(--sit-line);padding-left:16px}
+.situation-references{display:flex;flex-direction:column;justify-content:center;flex:1;min-width:0}
+.situation-columns h4{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;line-height:1.5;margin:0 0 12px;color:#4c3c5d}
+.situation-icon{width:18px;height:18px;flex:none;fill:none;stroke:var(--sit-purple);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.situation-photos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,1fr);gap:8px;align-items:center;margin:0;width:100%}
+.situation-photos figure{margin:0;min-width:0;border:1px solid #e9e6e3;background:#f6f5f2;border-radius:9px;overflow:hidden;aspect-ratio:4/3}
+.situation-photos img{display:block;width:100%;height:100%;object-fit:contain}
+.situation-photos figcaption{padding:10px;color:#777;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.situation-contract{margin:0}
+.situation-contract>div{display:grid;grid-template-columns:140px minmax(0,1fr);gap:12px;padding:11px 0;border-bottom:1px solid #eeeaf0}
+.situation-contract>div:first-child{padding-top:0}
+.situation-contract>div:last-child{border:0;padding-bottom:0}
+.situation-contract dt{display:flex;align-items:flex-start;gap:8px;font-size:13px;font-weight:500;line-height:1.5;color:#796a85;margin:0;text-transform:none;letter-spacing:0}
+.situation-contract dt .situation-icon{width:16px;height:16px;margin-top:2px}
+.situation-contract dd{margin:0;font-size:15px;line-height:1.5;color:#302b34}
+.situation-contract .recovery-row .situation-icon{stroke:#b96b5f}
+.situation-tools{margin-top:18px;border-top:1px solid var(--sit-line);padding-top:16px}
+.situation-tools-heading{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.situation-tools-heading h4{margin:0 auto 0 0}
+.situation-tools-heading>span:last-child{font-size:12px;color:#777}
+.situation-routing{font-size:13px;line-height:1.5;margin:9px 0 12px}
+.situation-tool-list{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.situation-tool-list.vla{grid-template-columns:1fr;color:#4c78a8;--tool-wash:#edf3f9;--tool-border:#dce6f0}
+.situation-tool-list.control{color:#39877d;--tool-wash:#eff7f4;--tool-border:#deebe6}
+.situation-tool{display:flex;align-items:flex-start;gap:10px;padding:11px;background:#fff;border:1px solid var(--tool-border);border-radius:9px;min-width:0}
+.situation-tool>div{min-width:0}
+.situation-tool-icon{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:7px;background:var(--tool-wash)}
+.situation-tool svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.situation-tool strong{font-size:14px;font-weight:600;line-height:1.5}
+.situation-tool p{font-size:13px;line-height:1.5;margin-top:3px}
+.situation-tool small{font-size:12px;line-height:1.5;color:#877765;display:block;margin-top:6px}
+/* A non-interactive offscreen copy determines the smallest shared height. */
+.situation-sheet .situation-measure{position:fixed;left:-20000px;top:0;visibility:hidden;pointer-events:none;contain:layout style;opacity:0}
+.situation-measure .situation-columns{min-height:0!important}
+@media(max-width:1100px){
+ .situation-sheet .phase-card{padding:13px 14px}
+ .situation-columns{gap:24px}
+ .situation-phase-intro{display:block}
+ .situation-phase-intro p{border:0;padding:0;margin-top:8px}
+ .situation-contract>div{grid-template-columns:1fr;gap:5px;padding:9px 0}
+ .situation-tool{gap:7px;padding:9px}
+ .situation-tool-icon{width:26px;height:26px}
+}
+@media(max-width:700px){
+ .learning-travel{display:none}
+ .situation-sheet .situation-summary{padding:18px 16px!important}
+ .situation-summary h2{font-size:24px}
+ .situation-dependencies{padding:9px 16px}
+ .situation-sheet .phase-cards{grid-template-columns:1fr 1fr}
+ .situation-sheet .phase-card{padding:13px 14px}
+ .situation-sheet .phase-card h4{font-size:14px}
+ .situation-sheet .phase-card:after{display:none}
+ .situation-sheet .phase-detail{padding:18px 16px}
+ .situation-columns{grid-template-columns:minmax(0,1fr);gap:20px;align-items:start;align-content:start}
+ .situation-visual-column,.situation-references{display:block}
+ .situation-phase-intro{margin-bottom:16px}
+ .situation-photos{margin:0;gap:6px}
+ .situation-contract-column{border-top:1px solid var(--sit-line);padding-top:18px}
+ .situation-contract>div{grid-template-columns:112px minmax(0,1fr);gap:10px}
+ .situation-tools-heading h4{font-size:14px}
+ .situation-tool{display:block}
+ .situation-tool-icon{margin-bottom:7px}
+ .situation-tool-list.vla .situation-tool{display:flex}
+ .situation-tool-list.vla .situation-tool-icon{margin-bottom:0}
+}
+@media(prefers-reduced-motion:reduce){.situation-sheet *{animation:none!important;transition:none!important}}
+
+/* Shared brand mark anchors the task representation header. */
+.situation-sheet .situation-summary{display:flex;align-items:center;gap:20px}
+.situation-heading-mark{display:block;width:66px;height:auto;flex:none}
+.situation-summary>div{min-width:0}
+@media(max-width:520px){.situation-sheet .situation-summary{gap:14px}.situation-heading-mark{width:48px}}
+
+/* A compact task header, with detailed dependencies in the phase contract. */
+.situation-sheet .situation-summary{padding:18px 24px!important;gap:16px}
+.situation-summary .situation-heading-mark{width:54px;height:auto;flex-shrink:0}
+.situation-summary h2{font-size:24px;margin:2px 0 0}
+.situation-summary .situation-task-goal{margin-left:auto;max-width:380px;color:#706779;font-size:14px}
+.contract-dependencies{border-top:1px solid var(--sit-line);padding-top:12px;margin-top:14px;font-size:12px;color:#82768b;line-height:1.6}
+.learning-source-note{padding:12px 24px;border-top:1px solid var(--sit-line);font-size:12px;line-height:1.5;color:#82768b}
+@media(max-width:600px){.situation-sheet .situation-summary{flex-wrap:wrap;padding:16px!important;gap:12px}.situation-summary .situation-task-goal{flex-basis:100%;max-width:none;margin:0}.learning-source-note{padding:12px 16px}}
+
+/* Match the Learning section hierarchy using the Situation accent. */
+.situation-section-heading h2{font-size:36px;line-height:1.2;margin:13px 0 8px;color:#8066a5}
+.situation-section-intro{font-size:12px;line-height:1.5;color:#687783;margin:14px 0 24px}
+@media(max-width:800px){.situation-section-heading h2{font-size:31px}}
+@media(max-width:520px){.situation-section-heading h2{font-size:29px}}
+
+/* Learning, the shared representation and execution read as one connected method. */
+section#situation.situation-section{padding-top:64px}
+.situation-sheet .situation-summary{padding:24px!important;gap:20px;background:#f8f5fc}
+.situation-summary .situation-section-heading h2{font-size:32px;margin:7px 0;color:#8066a5;line-height:1.2}
+.situation-summary .situation-section-intro{margin:0;font-size:12px;color:#82708f}
+.situation-task-identity{margin-left:auto;max-width:330px;text-align:right}
+.situation-task-identity strong{display:block;font-size:20px;color:#4e3c61;margin-bottom:5px}
+.situation-task-identity p{font-size:13px;color:#82768b}
+section#agent.agent-section{position:relative;padding-top:72px}
+.situation-agent-bridge{position:absolute;top:0;left:0;width:100%;height:72px;pointer-events:none}
+.situation-agent-bridge svg{display:block;width:400px;max-width:100%;height:72px;margin:auto;overflow:visible}
+.situation-agent-bridge>span{position:absolute;top:26px;left:calc(50% + 14px);font-size:12px;color:#92755d;background:var(--bg);padding:1px 4px;white-space:nowrap}
+@media(max-width:650px){.situation-sheet .situation-summary{gap:14px;padding:18px!important;flex-wrap:wrap}.situation-task-identity{flex-basis:100%;max-width:none;text-align:left;margin:0;padding-top:12px;border-top:1px solid #e9e0ef}.situation-summary .situation-section-heading h2{font-size:29px}.situation-agent-bridge>span{font-size:10px;left:calc(50% + 9px);white-space:normal;max-width:43%}}
+@media(prefers-reduced-motion:reduce){#situation-agent-flow{display:none}}
