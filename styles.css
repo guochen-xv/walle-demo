@@ -177,3 +177,13 @@ footer{border-top:0}
 
 .closing .orb-icon{display:flex;justify-content:center;align-items:center}
 .closing-situation-mark{display:block;width:76px;height:auto}
+
+/* Full-screen diagram viewer on phones; gesture handling is local to the image. */
+@media(max-width:600px){
+ .framework-dialog{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;margin:0;border:0;border-radius:0;}
+ .framework-dialog[open]{display:flex;flex-direction:column;}
+ .framework-dialog-bar{padding-top:max(12px,env(safe-area-inset-top));flex:none;}
+ .framework-dialog-bar button{min-height:40px;}
+ .framework-gesture-hint{flex:none;}
+ .framework-dialog-scroll{flex:1;height:auto;min-height:0;max-height:none;margin-bottom:env(safe-area-inset-bottom);}
+}
