@@ -38,7 +38,7 @@
    ${unsupported?'<circle cx="68" cy="122" r="18" fill="#F5E6E1" stroke="#B96B5F"/><path d="M61 115L75 129M75 115L61 129" stroke="#B96B5F" stroke-width="2"/>':''}
   </svg>`;
  }
- all('[data-task-scene]').forEach(host=>{const p=window.WALLE_DATA.situation.phases[{prepare:0,acquire:2,continue:3}[host.dataset.taskScene]],view=host.dataset.taskScene==='acquire'?'right':'main';host.innerHTML=`<img class="recorded-motivation" src="${p.views[view]}" alt="Recorded ${p.name} reference"><span class="schematic-label">Ep 0 · Frame ${p.referenceFrame} · Recorded reference</span>`;});
+ all('[data-task-scene]').forEach(host=>{const p=window.WALLE_DATA.situation.phases[{prepare:0,acquire:2,continue:3}[host.dataset.taskScene]],view=host.dataset.taskScene==='acquire'?'right':'main';host.innerHTML=`<img class="recorded-motivation" src="${p.views[view]}" alt="Recorded ${p.name} reference">`;});
  function render(){
   if(!$('#handoff-content'))return;
   const example=examples[direction],state=example[condition];
