@@ -102,14 +102,14 @@ body:has(#framework-dialog[open]){overflow:hidden}
 /* Demonstrations teach both actions and the physical context for using them. */
 .motivation-section,.handoff-section{padding-top:90px}
 .dependency-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.dependency-card{border:1px solid var(--line);background:#fff;border-radius:14px;overflow:hidden}
+.dependency-card{border:1px solid var(--line);background:#fff;border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
 .dependency-art{position:relative;background:#fafaf8;border-bottom:1px solid var(--line)}
 .dependency-art svg{display:block;width:100%;height:auto;max-height:220px}
 .schematic-label{display:block;padding:0 18px 12px;font-size:9px;color:var(--muted)}
-.dependency-card-copy{padding:16px 24px 18px}
-.dependency-card h3{font-size:25px;margin:12px 0 10px}
-.dependency-card p{font-size:13px;line-height:1.8;min-height:0}
-.establishes{font-size:12px;margin-top:18px;padding-top:12px;border-top:1px solid var(--line);color:var(--purple)}
+.dependency-card-copy{padding:22px 24px 24px;display:flex;flex-direction:column;flex:1;align-items:flex-start}
+.dependency-card h3{font-size:25px;margin:16px 0 12px}
+.dependency-card p{font-size:13px;line-height:1.8;min-height:0;margin-bottom:26px}
+.establishes{font-size:12px;width:100%;margin-top:auto;padding-top:16px;border-top:1px solid var(--line);color:var(--purple)}
 .establishes small{display:block;font-size:8px;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
 .demo-two-roles{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:32px;padding:32px 0;border-bottom:1px solid var(--line);margin-top:16px}
 .demo-two-roles h3{font-size:22px;line-height:1.4;margin-top:12px}
