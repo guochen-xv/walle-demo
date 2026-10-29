@@ -58,8 +58,11 @@
    });
    const enforceEnd=()=>{if(wanted(g)&&g.main.currentTime>=g.range.end){stop(g);g.videos.forEach(v=>{if(v.readyState>=1)v.currentTime=g.range.start;});update();}};
    if(g.main.requestVideoFrameCallback){const frame=()=>{if(disposed)return;enforceEnd();g.main.requestVideoFrameCallback(frame);};g.main.requestVideoFrameCallback(frame);}
-   g.main.addEventListener('timeupdate',()=>{enforceEnd();const p=P[Number(g.card.dataset.previewPanel)],x=Math.min(p.frames[1]-p.frames[0],Math.max(0,Math.floor((g.main.currentTime-g.range.start)*g.range.framesPerSecond)));g.card.querySelectorAll('.phase-video-cursor').forEach(line=>{line.setAttribute('x1',x);line.setAttribute('x2',x);});});
+   g.main.addEventListener('timeupdate',enforceEnd);
   });
+  const drawCursors=()=>{groups.forEach(g=>{const p=P[Number(g.card.dataset.previewPanel)],x=Math.min(p.frames[1]-p.frames[0],Math.max(0,(g.main.currentTime-g.range.start)*g.range.framesPerSecond));g.card.querySelectorAll('.phase-video-cursor').forEach(line=>{line.setAttribute('x1',x);line.setAttribute('x2',x);});});};
+  const cursorFrame=()=>{if(disposed)return;drawCursors();requestAnimationFrame(cursorFrame);};
+  cursorFrame();
   const sync=setInterval(()=>{const now=performance.now();groups.forEach(g=>{if(!wanted(g))return;
    if(g.main.currentTime>=g.range.end){stop(g);g.videos.forEach(v=>{if(v.readyState>=1)v.currentTime=g.range.start;});g.lastTime=g.range.start;g.lastAdvance=now;}
    if(Math.abs(g.main.currentTime-g.lastTime)>.01){g.lastTime=g.main.currentTime;g.lastAdvance=now;g.stalled=false;g.card.querySelector('.phase-video-error').hidden=true;}
