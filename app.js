@@ -263,4 +263,4 @@ window.addEventListener('resize',()=>{renderOffline();drawConnections();});rende
 })();
 
 // Navigation follows the visible main region.
-(()=>{const links=[...document.querySelectorAll('header nav a')];window.addEventListener('scroll',()=>{let id='overview';for(const x of ['workspace','situation','agent'])if(document.getElementById(x).getBoundingClientRect().top<180)id=x;links.forEach(a=>a.toggleAttribute('aria-current',a.getAttribute('href')==='#'+id));},{passive:true});})();
+(()=>{const links=[...document.querySelectorAll('header nav a')];window.addEventListener('scroll',()=>{let id='overview';for(const x of ['workspace','situation','agent','results'])if(document.getElementById(x).getBoundingClientRect().top<180)id=x;links.forEach(a=>a.toggleAttribute('aria-current',a.getAttribute('href')==='#'+id));},{passive:true});})();
