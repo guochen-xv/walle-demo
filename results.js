@@ -42,12 +42,6 @@
     {task:'Drawstring slider',values:{pi:26,g:0,dm:6,harness:0,spotter:0,pyrua:0,sl:46}},
     {task:'Handbag zipper',values:{pi:24,g:0,dm:0,harness:0,spotter:0,pyrua:0,sl:64}}
   ];
-  const ablationRows=[
-    {task:'Harness VLA (with Situation)',success:0,stage:30},
-    {task:'PyRUA-Lean (with Situation)',success:0,stage:25},
-    {task:'Spotter (with Situation)',success:0,stage:37.5},
-    {task:'SL (ours)',success:70,stage:92.5,ours:true}
-  ];
   const efficiencyRows=[
     {task:'Wallet zipper',pyrua:23.75,harness:3.87,spotter:3.06,sl:1.58},
     {task:'Backpack zipper',pyrua:14.87,harness:2.95,spotter:3.32,sl:1.29},
@@ -58,9 +52,8 @@
   ];
 
   const views=[
-    {id:'simulation',label:'Simulation',context:'Six RoboDojo tasks · one evaluation seed',note:'Cells show success rate (%) / official RoboDojo score.'},
     {id:'real',label:'Real robot',context:'Six tasks · 50 VLA episodes per task',note:'Bars show task success rate. Agent baselines use 10 episodes per task.'},
-    {id:'ablation',label:'Situation ablation',context:'Dishcloth hanging · 10 episodes per method',note:'Stage score assigns 25 points to each of four stages.'},
+    {id:'simulation',label:'Simulation',context:'Six RoboDojo tasks · one evaluation seed',note:'Cells show success rate (%) / official RoboDojo score.'},
     {id:'efficiency',label:'Execution efficiency',context:'Six real-robot tasks · lower is better',note:'Ratio of total duration to physical action duration.'}
   ];
 
@@ -86,11 +79,6 @@
         ['BEST VLA BASELINE','28%','π0.5 is the strongest evaluated VLA baseline by task average.',''],
         ['TASK LEADS','6 / 6','Situated Learning has the highest observed success rate on every real-robot task.','']
       ],
-      ablation:[
-        ['DISHCLOTH SUCCESS','70%','Situated Learning completes the task in the executable-materials ablation.','accent'],
-        ['SITUATION STAGE SCORE','92.5','Mean score out of 100 across four execution stages.',''],
-        ['COMPARISON AGENTS','0%','Harness VLA, PyRUA-Lean, and Spotter complete no episode.','']
-      ],
       efficiency:[
         ['SL MEAN RATIO','1.36×','Mean total-to-action time ratio across six real-robot tasks.','accent'],
         ['HARNESS VLA MEAN','3.32×','Mean ratio for the fastest comparison agent.','']
@@ -113,14 +101,10 @@
 
   function realTable(){
     const average=key=>realRows.reduce((sum,row)=>sum+row.values[key],0)/realRows.length;
-    const rows=realRows.map(row=>{const best=Math.max(...realMethods.map(method=>row.values[method.key]));return `<tr><td>${esc(row.task)}</td>${realMethods.map(method=>`<td class="results-bar-cell ${classNames(method.ours?'ours':'',row.values[method.key]===best&&best>0?'winner':'')}">${row.values[method.key]}<div class="results-bar"><i style="width:${row.values[method.key]}%"></i></div></td>`).join('')}</tr>`;}).join('');
+    const rows=realRows.map(row=>{const best=Math.max(...realMethods.map(method=>row.values[method.key]));return `<tr><td>${esc(row.task)}</td>${realMethods.map(method=>`<td class="results-bar-cell ${classNames(method.ours?'ours':'',row.values[method.key]===best&&best>0?'winner':'')}">${row.values[method.key]}%<div class="results-bar"><i style="width:${row.values[method.key]}%"></i></div></td>`).join('')}</tr>`;}).join('');
     const bestAverage=Math.max(...realMethods.map(method=>average(method.key)));
-    const summary=`<tr class="summary-row"><td>Mean</td>${realMethods.map(method=>`<td class="${classNames(method.ours?'ours':'',average(method.key)===bestAverage?'winner':'')}">${fmt(average(method.key))}<div class="results-bar"><i style="width:${average(method.key)}%"></i></div></td>`).join('')}</tr>`;
+    const summary=`<tr class="summary-row"><td>Mean</td>${realMethods.map(method=>`<td class="${classNames(method.ours?'ours':'',average(method.key)===bestAverage?'winner':'')}">${fmt(average(method.key))}%<div class="results-bar"><i style="width:${average(method.key)}%"></i></div></td>`).join('')}</tr>`;
     return `<div class="results-panel-head"><div><span class="results-kicker">IMETAY1 · REAL-ROBOT BENCHMARK</span><h3>Situation-guided execution lifts every task.</h3></div><p>Success uses each task's physical criterion. Rollouts receive no human intervention.</p></div><div class="results-table-wrap"><table class="results-table results-real-table"><thead><tr><th rowspan="2">Task</th><th colspan="3" class="group-vla">VLA</th><th colspan="4" class="group-agent">Agent</th></tr><tr>${realMethods.map(method=>`<th class="${method.ours?'ours':''}">${method.label}</th>`).join('')}</tr></thead><tbody>${rows}${summary}</tbody></table></div><p class="results-caption">VLA and Situated Learning use 50 episodes per task. Agent baselines use 10 episodes per task with at most 20 API calls per episode.</p>`;
-  }
-
-  function ablationTable(){
-    return `<div class="results-panel-head"><div><span class="results-kicker">EXECUTABLE SITUATION MATERIALS</span><h3>Context alone does not complete the task.</h3></div><p>All comparison agents receive the same Situation context and task instruction.</p></div><div class="results-table-wrap"><table class="results-table results-ablation-table"><thead><tr><th>Method</th><th>Success rate</th><th>Situation stage score</th></tr></thead><tbody>${ablationRows.map(row=>`<tr><td class="${row.ours?'ours':''}">${row.task}</td><td class="${row.ours?'ours':''}">${row.success}%</td><td class="${row.ours?'ours':''}">${row.stage}</td></tr>`).join('')}</tbody></table></div><p class="results-caption">Dishcloth hanging · 10 episodes per method</p>`;
   }
 
   function efficiencyTable(){
@@ -132,12 +116,12 @@
     return `<div class="results-panel-head"><div><span class="results-kicker">REAL-ROBOT RUNTIME</span><h3>Phase-local execution keeps overhead close to action time.</h3></div><p>Lower values indicate greater efficiency. Total duration includes inference and execution overhead.</p></div><div class="results-table-wrap"><table class="results-table results-efficiency-table"><thead><tr><th>Task</th>${methods.map(([key,label])=>`<th class="${key==='sl'?'ours':''}">${label}</th>`).join('')}</tr></thead><tbody>${rows}${summary}</tbody></table></div><div class="results-legend"><span><i></i> lowest ratio on the task</span><span>R = total duration / physical action duration</span></div>`;
   }
 
-  function render(view='simulation'){
+  function render(view='real'){
     const selected=views.find(item=>item.id===view)||views[0];
     renderTabs(selected.id);
     renderHighlights(selected.id);
     viewNote.textContent=selected.note;
-    panel.innerHTML={simulation:simulationTable,real:realTable,ablation:ablationTable,efficiency:efficiencyTable}[selected.id]();
+    panel.innerHTML={simulation:simulationTable,real:realTable,efficiency:efficiencyTable}[selected.id]();
   }
 
   render();
