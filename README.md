@@ -1,31 +1,35 @@
-# WALLE
+# WALLE demo
 
-An interactive website for Situated Learning, Situation and Situated Agent.
+This static page presents three existing Situated Learning results as one switchable demo:
+
+- `Unzip the bag.`
+- `Grasp each backpack buckle and release the attached strap on both sides.`
+- `Pick up the coin from the holder and insert it precisely into the coin bank.`
 
 ## Open
 
-Extract the complete package and open `index.html` in Chrome or Edge. Keep the assets directory beside the page. For HTTP preview, run `python3 serve.py --port 8766`, then open http://127.0.0.1:8766.
+Serve the directory over HTTP so local videos and images load consistently:
 
-## Structure
+```bash
+cd /path/to/walle-demo
+python3 -m http.server 8099
+```
 
-- `data.js`: task phases, contracts, boundaries, episode references and capability routing.
-- `signals.js`: frame-aligned gripper tracks.
-- `learning.js` / `episodes.js`: Learning animation and synchronized three-camera playback.
-- `app.js`: phase inspection, shared motion controls and Situation slideshow.
-- `agent.js` / `agent-data.js`: task playback and scenario-dependent contract checks.
-- `control-demo.js`: normalized image-space annotations for grasp footage.
-- `method-cards.*`: section layout and connecting paths.
+Open `http://127.0.0.1:8099/`.
 
-## Playback
+## Data and presentation
 
-The center demonstration uses pre-encoded 3× Ep 0 videos at browser playbackRate 1. Background collection cards use JPEGs. Shared controls pause Learning and its selected video; offscreen playback pauses. Situation cycles every three seconds. Agent playback has separate controls.
+`data.js` is a compact manifest generated from the three authoritative local Situation revisions. It keeps the canonical phase contracts, representative references, local stage videos, and state-graph paths. The page does not call an API or regenerate analysis.
 
-Agent progress follows video time where a clip is configured and the presentation clock otherwise. Contract checks follow the selected scenario. Media references and playback durations are configured in `agent-data.js`; image-space overlay coordinates are configured in `control-demo.js`.
+`learning.js` owns the complete nine-stage Situated Learning walkthrough, the stacked Robot demonstrations carousel, phase media, and execution-method routing. Click the faded side window to switch tasks or click a workflow stage to inspect its output. `app.js` renders the selected Situation as a horizontal phase graph. Canonical phases appear once; normal transitions are solid and condition-dependent transitions are dashed. Clicking a graph node opens its representative reference and contract details.
 
-## Data
+`agent.js` follows the same selected task and currently shows an explicit empty video slot. No runtime execution recording is implied by the demo.
 
-The Learning recording is 2,855 frames at 30 fps. The four displayed phases cover frames 0–2658. Phase boundaries, reference frames and contracts are defined in `data.js`; `situation.example.json` contains the same schema. Keep original frame indices when updating assets.
+The `task-assets/` directory contains only curated local stage videos and representative reference frames. Keep it beside `index.html` when copying the demo.
 
-## Web video encoding
+## Validation
 
-Main-camera recordings use H.264 at 640×480; wrist recordings use 480×360. Agent recordings retain their original frame counts and durations. Demonstration collection videos are encoded at 3× speed and 30 fps; their media time maps to source time by multiplying by three. Source frame indices in phase data remain unchanged. MP4 faststart places playback metadata before video data. Phase preview encodings remain unchanged.
+```bash
+for f in data.js learning.js app.js agent.js; do node --check "$f"; done
+git diff --check
+```
