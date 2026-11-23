@@ -41,12 +41,14 @@
       '<li class="' + (item[0] === currentStage ? 'active' : '') + '" data-learning-stage="' + item[0] + '">' +
       '<button type="button" aria-pressed="' + (item[0] === currentStage) + '">' +
       '<span>' + item[1] + '</span><strong>' + item[2] + '</strong><small>' + item[3] + '</small></button></li>').join('');
-    rail.innerHTML = '<div class="learning-stage-heading"><div><span class="module-kicker">SITUATED LEARNING</span>' +
-      '<h3>From demonstrations to executable phase materials</h3><p>' + esc(task.name) +
-      ' · inspect each result as it is constructed.</p></div><span class="learning-stage-count">' +
-      pipeline.length + ' stages</span></div><ol>' + items + '</ol>' +
+    rail.innerHTML = '<ol>' + items + '</ol>' +
       '<div class="learning-stage-detail" id="learning-stage-detail"></div>';
-    $('#offline-view') && $('#offline-view').prepend(rail);
+    const board = $('#offline-view');
+    const demoModule = $('#demo-module');
+    if (board) {
+      if (demoModule) demoModule.insertAdjacentElement('afterend', rail);
+      else board.prepend(rail);
+    }
     rail.querySelectorAll('[data-learning-stage]').forEach(item => item.addEventListener('click', () => {
       currentStage = item.dataset.learningStage;
       renderStageDetail(task);
@@ -125,19 +127,73 @@
     if (!host) return;
     const demos = task.demos || [];
     const selected = Math.max(0, store.list.findIndex(item => item.id === task.id));
+    const mediaMarkup = (src, alt, active, poster) => {
+      if (!src) return '<div class="demo-inline-video demo-media-empty" aria-hidden="true"></div>';
+      const video = /\.(mp4|webm|mov)(\?|$)/i.test(src);
+      if (video && !active) return '<img class="demo-inline-video" src="' + esc(poster || '') + '" alt="' + esc(alt) + '" loading="lazy">';
+      return video
+        ? '<video class="demo-inline-video" src="' + esc(src) + '" ' +
+          (active ? 'data-demo-playing="true" autoplay loop ' : '') +
+          'muted playsinline preload="' + (active ? 'auto' : 'none') + '" poster="' + esc(poster || '') + '" aria-label="' + esc(alt) + '"></video>'
+        : '<img class="demo-inline-video" src="' + esc(src) + '" alt="' + esc(alt) + '" loading="lazy">';
+    };
+    const syncPlayback = () => {
+      host.querySelectorAll('.mini-episode').forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const shouldPlay = card.classList.contains('focus') && !document.hidden && rect.bottom > 0 && rect.top < innerHeight;
+        card.querySelectorAll('video[data-demo-playing]').forEach(video => {
+          video.muted = true;
+          video.loop = true;
+          video.playbackRate = 1;
+          if (shouldPlay) video.play().catch(() => {});
+          else video.pause();
+        });
+      });
+    };
+    const existing = [...host.querySelectorAll('.mini-episode[data-task-id]')];
+    const sameCards = existing.length === store.list.length && existing.every(card => store.list.some(item => item.id === card.dataset.taskId));
+    if (sameCards) {
+      existing.forEach((card, index) => {
+        const item = store.list.find(entry => entry.id === card.dataset.taskId);
+        if (!item) return;
+        const active = item.id === task.id;
+        const relative = (index - selected + store.list.length) % store.list.length;
+        const position = active ? 'center' : relative === 1 ? 'right' : 'left';
+        const demo = (item.demos || [])[0] || {};
+        const views = demo.views || {};
+        const unzipVideos = item.id === 'unzip' ? {left: 'ep0-left-3x.mp4', main: 'ep0-main-3x.mp4', right: 'ep0-right-3x.mp4'} : {};
+        card.dataset.position = position;
+        card.classList.toggle('focus', active);
+        card.setAttribute('aria-current', String(active));
+        card.querySelector('.episode-views').innerHTML = [
+          [unzipVideos.left || views.left || demo.poster || '', 'Left wrist demonstration'],
+          [unzipVideos.main || demo.video || views.main || demo.poster || '', 'Main camera demonstration'],
+          [unzipVideos.right || views.right || demo.poster || '', 'Right wrist demonstration']
+        ].map(([src, alt]) => '<figure>' + mediaMarkup(src, alt, active, demo.poster) + '</figure>').join('');
+        const meta = card.querySelector('.learning-demo-meta');
+        if (meta) meta.textContent = (item.demos && item.demos.length || 0) + ' representative phase views · ' + phases(item).length + ' phases';
+      });
+      syncPlayback();
+      return;
+    }
     host.innerHTML = '<div class="learning-carousel-note">Select a demonstration to change the complete workflow.</div>' +
       store.list.map((item, index) => {
         const demo = (item.demos || [])[0] || {};
         const views = demo.views || {};
-        const position = index === selected ? 'center' : index < selected ? 'left' : 'right';
+        const active = item.id === task.id;
+        const relative = (index - selected + store.list.length) % store.list.length;
+        const position = active ? 'center' : relative === 1 ? 'right' : 'left';
+        const unzipVideos = item.id === 'unzip' ? {left: 'ep0-left-3x.mp4', main: 'ep0-main-3x.mp4', right: 'ep0-right-3x.mp4'} : {};
+        const left = unzipVideos.left || views.left || demo.poster || '';
+        const main = unzipVideos.main || demo.video || views.main || demo.poster || '';
+        const right = unzipVideos.right || views.right || demo.poster || '';
         return '<article class="mini-episode ' + (position === 'center' ? 'focus' : '') +
           '" data-task-id="' + esc(item.id) + '" data-position="' + position +
           '" tabindex="0" role="button" aria-current="' + (position === 'center') + '">' +
           '<p class="demo-task">Task: <strong>' + esc(item.name.replace(/\.$/, '')) +
-          '</strong></p><div class="episode-views"><figure><img class="demo-inline-video" src="' +
-          esc(views.left || demo.poster || '') + '" alt="Left view" loading="lazy"></figure><figure><img class="demo-inline-video" src="' +
-          esc(views.main || demo.poster || '') + '" alt="Main camera view" loading="lazy"></figure><figure><img class="demo-inline-video" src="' +
-          esc(views.right || demo.poster || '') + '" alt="Right view" loading="lazy"></figure></div>' +
+          '</strong></p><div class="episode-views"><figure>' + mediaMarkup(left, 'Left wrist demonstration', active, demo.poster) +
+          '</figure><figure>' + mediaMarkup(main, 'Main camera demonstration', active, demo.poster) +
+          '</figure><figure>' + mediaMarkup(right, 'Right wrist demonstration', active, demo.poster) + '</figure></div>' +
           '<small class="learning-demo-meta">' + (item.demos && item.demos.length || 0) +
           ' representative phase views · ' + phases(item).length + ' phases</small></article>';
       }).join('');
@@ -149,6 +205,9 @@
       });
     });
     host.classList.toggle('empty', !demos.length);
+    syncPlayback();
+    document.addEventListener('visibilitychange', syncPlayback);
+    window.addEventListener('scroll', syncPlayback, {passive: true});
   }
 
   function buildCuts(task) {
@@ -274,7 +333,7 @@
     const header = $('#learning-card') && $('#learning-card').querySelector('.method-header p');
     if (header) header.textContent = 'Inspect the evidence produced at each learning stage · ' + task.name;
     const title = $('#demo-module .module-title');
-    if (title) title.textContent = 'Robot demonstrations · ' + task.name;
+    if (title) title.textContent = 'Robot demonstrations';
     const parsing = $('#parsing-module h3');
     if (parsing) parsing.textContent = 'Overview + detailed analysis';
     const skills = $('#skills-module h3');
