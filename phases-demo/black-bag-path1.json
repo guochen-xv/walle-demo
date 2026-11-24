@@ -1,0 +1,49 @@
+{
+  "video": "observation.images.mp4",
+  "fps": 30,
+  "frameCount": 1512,
+  "phases": [
+    {
+      "phase": 0,
+      "startFrame": 0,
+      "endFrame": 201,
+      "caption": "Move the left gripper inward and grasp the bag's lower-left fabric rim."
+    },
+    {
+      "phase": 1,
+      "startFrame": 202,
+      "endFrame": 353,
+      "caption": "Move the right gripper inward and grasp the bag's lower-right fabric rim while the left gripper holds the opposite rim."
+    },
+    {
+      "phase": 2,
+      "startFrame": 354,
+      "endFrame": 458,
+      "caption": "Rotate both grippers downward while holding the bag's opposite lower rims, folding and tensioning the lower fabric."
+    },
+    {
+      "phase": 3,
+      "startFrame": 459,
+      "endFrame": 693,
+      "caption": "Release the right bag rim and return the right arm to the recorded home pose while the left hand braces the bag."
+    },
+    {
+      "phase": 4,
+      "startFrame": 694,
+      "endFrame": 1013,
+      "caption": "Grasp the lower-center zipper pull with the right gripper while the left hand braces the bag after the right arm reaches home."
+    },
+    {
+      "phase": 5,
+      "startFrame": 1014,
+      "endFrame": 1356,
+      "caption": "Pull the zipper pull toward the bag's upper end with the right hand while the left hand braces the opposite lower rim."
+    },
+    {
+      "phase": 6,
+      "startFrame": 1357,
+      "endFrame": 1511,
+      "caption": "Return both arms to the demonstrated rest pose; keep both grippers unchanged."
+    }
+  ]
+}
