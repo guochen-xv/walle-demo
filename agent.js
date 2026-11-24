@@ -1,100 +1,375 @@
-/* Situated Agent preview with Situation path-aware execution videos. */
+/* Replay the selected Situation using its independent phase recordings. */
 (() => {
   'use strict';
+  const store = window.WalleTaskStore;
+  const root = document.querySelector('#agent-app');
+  if (!store || !root) return;
+
+  const agentData = window.WALLE_AGENT_DATA || {};
+  const pathsByTask = agentData.situatedPaths || {};
+  const selectedPaths = new Map();
   const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[char]));
-  const store = window.WalleTaskStore;
-  const agentData = window.WALLE_AGENT_DATA || {};
-  if (!store) return;
-
-  const loop = [
-    ['observe', 'Observe conditions', 'Read the current state and entry conditions.'],
-    ['select', 'Select demonstrated path', 'Choose the phase contract supported by the observation.'],
-    ['execute', 'Execute assigned skill', 'Run the skill attached to the selected phase.'],
-    ['verify', 'Verify outcome', 'Check the expected result and handoff evidence.'],
-    ['advance', 'Advance / recover', 'Continue, retry, or restore the required state.']
-  ];
-  let activePathId = null;
-  let activePhaseId = null;
-
-  const phaseLabel = phase => phase.kind === 'home' || phase.operation === 'home'
-    ? 'Return home'
-    : phase.target || phase.operation || 'Prepared phase';
-  const handoffText = phase => Array.isArray(phase.handoff)
-    ? phase.handoff.join(', ')
-    : phase.handoff || 'Pass the completed phase state to the next phase.';
-  const pathsFor = task => agentData.situatedPaths?.[task.id] || [];
-  const selectedPathFor = paths => paths.find(path => path.id === activePathId) || paths[0] || null;
-  const phasesForPath = (task, path) => {
-    const phases = task.phases || [];
-    if (!path?.ranges) return phases;
-    const byId = new Map(phases.map(phase => [phase.id, phase]));
-    const order = path.order || Object.keys(path.ranges).map(Number);
-    return order.map(id => byId.get(id)).filter(Boolean);
-  };
-  const firstAvailablePhase = (task, path) => phasesForPath(task, path)[0] || {};
+  const phaseId = phase => 'P' + String(phase.id).padStart(2, '0');
+  const phaseTitle = phase => phase.kind === 'home' ? 'Return home'
+    : [phase.operation, phase.target].filter(Boolean).join(' · ');
+  const skill = phase => phase.capability?.primary || 'Prepared skill';
+  const method = phase => ({vla: 'VLA', demonstration_grasp: 'Control', fixed_move: 'Control', home: 'Home'})[skill(phase)] || 'Prepared';
+  const formatTime = seconds => Math.floor(seconds / 60) + ':' + String(Math.floor(seconds % 60)).padStart(2, '0');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let speed = 3;
+  let dispose = () => {};
 
   function render(task = store.current) {
-    const root = document.querySelector('#agent-app');
-    if (!root || !task) return;
-    const phases = task.phases || [];
-    const paths = pathsFor(task);
-    const selectedPath = selectedPathFor(paths);
-    const orderedPhases = phasesForPath(task, selectedPath);
-    if (selectedPath && !selectedPath.ranges[activePhaseId]) activePhaseId = firstAvailablePhase(task, selectedPath).id;
-    const selected = phases.find(phase => phase.id === activePhaseId) || firstAvailablePhase(task, selectedPath);
+    dispose();
+    const paths = pathsByTask[task.id] || [];
+    const path = paths.find(item => item.id === selectedPaths.get(task.id)) || paths[0];
+    const byId = new Map(task.phases.map(phase => [phase.id, phase]));
+    const phases = path ? path.order.map(id => byId.get(id)) : task.phases;
+    let total = 0;
+    const durations = phases.map(phase => {
+      if (!path) return 0;
+      const [start, end] = path.ranges[phase.id];
+      return (end - start + 1) / path.fps;
+    });
+    const offsets = durations.map(duration => {
+      const offset = total;
+      total += duration;
+      return offset;
+    });
 
-    root.innerHTML = `<div class="agent-preview-shell">
-      <div class="agent-preview-top">
-        <div class="agent-task-summary"><span class="eyebrow">SELECTED SITUATION</span><h3>${esc(task.name)}</h3><p>${esc(task.goal)}</p><div class="agent-contract-pills"><span>${esc(task.summary.phaseCount)} phase contracts</span><span>${esc(task.summary.pathCount)} execution paths</span><span>${paths.length ? 'path videos connected' : 'local materials ready'}</span></div></div>
-        <div class="agent-loop-panel"><div class="agent-loop-heading"><span class="eyebrow">RUNTIME LOOP</span><small>phase-aware execution</small></div><div class="agent-loop" role="list" aria-label="Situated Agent runtime loop">${loop.map(([id, title, detail], index) => `<div class="agent-loop-step${index === 0 ? ' active' : ''}" data-loop-step="${id}" role="listitem"><span>${String(index + 1).padStart(2, '0')}</span><strong>${esc(title)}</strong><small>${esc(detail)}</small></div>`).join('')}</div></div>
+    root.innerHTML = `
+      <div class="ag-toolbar">
+        <div class="ag-buttons">
+          <button type="button" id="ag-play" class="primary">▶ Play task</button>
+          <button type="button" id="ag-reset" class="outline">↺ Replay</button>
+          <label>Speed <select id="ag-speed" aria-label="Playback speed">
+            ${[1, 2, 3, 4].map(rate => `<option value="${rate}">${rate}×</option>`).join('')}
+          </select></label>
+        </div>
+        ${path ? `<label>Scenario walkthrough <select id="ag-scenario">
+          ${paths.map(item => `<option value="${esc(item.id)}">${esc(item.label)}</option>`).join('')}
+        </select></label>` : ''}
       </div>
-      ${paths.length ? `<div class="agent-path-panel"><div class="agent-path-heading"><span class="eyebrow">DEMONSTRATED PATHS</span><small>Situation alternatives</small></div><div class="agent-path-tabs" role="tablist" aria-label="Choose a demonstrated path">${paths.map(path => `<button type="button" role="tab" data-agent-path="${esc(path.id)}" aria-selected="${path.id === selectedPath.id}"><strong>${esc(path.label)}</strong><span>${esc(path.detail)}</span></button>`).join('')}</div></div>` : ''}
-      <div class="agent-preview-grid"><div class="agent-video-panel">${paths.length ? `<div class="agent-video-frame"><video id="agent-path-video" controls playsinline preload="metadata" aria-label="${esc(selectedPath.label)} execution video"></video></div><div class="agent-video-caption" id="agent-video-caption">${esc(selectedPath.label)} · ${esc(selectedPath.detail)} · frames ${selectedPath.ranges[selected.id][0]}–${selectedPath.ranges[selected.id][1]}</div>` : `<div class="agent-empty-video"><div class="agent-empty-icon">◇</div><strong>Situated Agent video preview</strong><p>Execution video will be connected here after deployment. The selected Situation contract is ready for inspection.</p></div>`}</div><div class="agent-contract-preview" aria-live="polite"><span class="eyebrow">CURRENT PHASE CONTRACT</span><h3 id="agent-phase-title">P${String(selected.id ?? 0).padStart(2, '0')} · ${esc(phaseLabel(selected))}</h3><p id="agent-phase-goal">${esc(selected.goal || selected.prompt || 'Observe the demonstrated entry condition.')}</p><dl><dt>Assigned skill</dt><dd id="agent-phase-skill">${esc(selected.capability?.primary || 'Prepared skill')}</dd><dt>Handoff</dt><dd id="agent-phase-handoff">${esc(handoffText(selected))}</dd></dl></div></div>
-      <div class="agent-phase-strip" role="list" aria-label="Select a phase contract">${orderedPhases.map(phase => { const available = !selectedPath || Boolean(selectedPath.ranges[phase.id]); const pathHint = available ? (phase.arm || 'Recorded execution') : `Only on ${paths.find(path => path.ranges[phase.id])?.label || 'other path'}`; return `<button type="button" role="listitem" data-agent-phase="${phase.id}"${phase.id === selected.id ? ' aria-current="true"' : ''}${available ? '' : ' disabled'}><small>P${String(phase.id ?? 0).padStart(2, '0')}</small><strong>${esc(phaseLabel(phase))}</strong><span>${esc(pathHint)}</span></button>`; }).join('')}</div>
-    </div>`;
+      <div class="ag-context">
+        <span>✳ SITUATION</span><span>${esc(task.name)}</span><span id="ag-stage" role="status"></span>
+      </div>
+      <div class="ag-layout">
+        <div class="ag-observation">
+          <div class="ag-camera-bar"><span>CURRENT OBSERVATION</span></div>
+          <div class="ag-camera-stage">
+            ${path ? '<div class="ag-screen"><video id="ag-video" muted playsinline preload="metadata" aria-label="Recorded phase execution"></video></div>'
+              : '<div id="ag-placeholder"><h3>Situated Agent video preview</h3><p>Execution recording unavailable.</p></div>'}
+            <div id="ag-media-status" role="status"></div>
+          </div>
+          <div id="ag-caption" class="ag-caption"></div>
+          <div class="ag-loop" aria-label="Agent runtime loop">
+            <span data-ag-loop="observe">Observe &amp; Identify</span>
+            <span data-ag-loop="execute">Execute</span>
+            <span data-ag-loop="verify">Verify</span>
+          </div>
+        </div>
+        <aside class="ag-contract">
+          <div id="ag-contract-header"></div>
+          <div class="ag-panel-stack">
+            <div id="ag-execute-view">
+              <div id="ag-contract-content"></div>
+              <div class="ag-execution" hidden>
+                <div class="ag-progress-label"><span>Phase progress</span><b id="ag-percent"></b></div>
+                <div class="ag-progress" role="progressbar" aria-label="Phase progress" aria-valuemin="0" aria-valuemax="100"><i></i></div>
+              </div>
+            </div>
+            <section id="ag-verify-view" aria-label="Recorded phase verification" aria-hidden="true"></section>
+          </div>
+        </aside>
+      </div>
+      <div class="ag-task">
+        <div class="ag-time-heading"><strong>Task timeline</strong><span id="ag-time"></span></div>
+        <div class="ag-phase-track" role="group" aria-label="Choose a phase">
+          ${phases.map((phase, i) => `<button type="button" data-ag-phase="${i}" data-method="${method(phase)}">
+            <small>${phaseId(phase)} · ${method(phase)}</small><strong>${esc(phaseTitle(phase))}</strong>
+            ${path ? `<span>${formatTime(durations[i])}</span>` : ''}<em></em>
+          </button>`).join('')}
+        </div>
+        ${path ? `<div class="ag-duration-track" aria-label="Phase durations to scale">
+          ${phases.map((phase, i) => `<span data-method="${method(phase)}" style="flex:${durations[i]}">${phaseId(phase)}</span>`).join('')}
+        </div><label class="ag-scrubber">Playback position<input id="ag-seek" type="range" min="0" max="${total}" step="any" value="0"></label>` : ''}
+      </div>`;
 
-    const video = root.querySelector('#agent-path-video');
-    const title = root.querySelector('#agent-phase-title');
-    const goal = root.querySelector('#agent-phase-goal');
-    const skill = root.querySelector('#agent-phase-skill');
-    const handoff = root.querySelector('#agent-phase-handoff');
-    const videoCaption = root.querySelector('#agent-video-caption');
-    const setVideoPhase = (path, phase, autoplay = false) => {
-      const clip = path?.clips?.[phase.id];
-      if (!video || !clip) return;
-      video.src = clip;
-      video.load();
-      if (autoplay) video.addEventListener('loadedmetadata', () => video.play().catch(() => {}), { once: true });
-    };
+    const $ = selector => root.querySelector(selector);
+    const video = $('#ag-video');
+    if (path?.aspectRatio) $('.ag-screen').style.aspectRatio = path.aspectRatio;
+    const play = $('#ag-play');
+    const replay = $('#ag-reset');
+    const speedSelect = $('#ag-speed');
+    const scenario = $('#ag-scenario');
+    const seek = $('#ag-seek');
+    const contract = $('.ag-contract');
+    const execution = $('#ag-execute-view');
+    const verification = $('#ag-verify-view');
+    const status = $('#ag-media-status');
+    const phaseButtons = [...root.querySelectorAll('[data-ag-phase]')];
+    const loopSteps = [...root.querySelectorAll('[data-ag-loop]')];
+    const phaseProgress = $('.ag-execution');
+    const progress = $('.ag-progress');
+    const progressFill = progress.querySelector('i');
+    const mediaEvents = new AbortController();
+    const completed = new Set();
+    let index = 0;
+    let playing = false;
+    let walkthrough = false;
+    let mode = 'preview';
+    let pendingTime = 0;
+    let stageTimer;
+    let checkRows = [];
+    let verificationStep = 0;
+    let playRequest = 0;
+    let transitionAnimations = [];
 
-    const updatePhase = phase => {
-      activePhaseId = phase.id;
-      root.querySelectorAll('[data-agent-phase]').forEach(node => node.removeAttribute('aria-current'));
-      root.querySelector(`[data-agent-phase="${phase.id}"]`)?.setAttribute('aria-current', 'true');
-      title.textContent = `P${String(phase.id ?? 0).padStart(2, '0')} · ${phaseLabel(phase)}`;
-      goal.textContent = phase.goal || phase.prompt || 'Observe the demonstrated entry condition.';
-      skill.textContent = phase.capability?.primary || 'Prepared skill';
-      handoff.textContent = handoffText(phase);
-      if (videoCaption && selectedPath?.ranges?.[phase.id]) {
-        const [startFrame, endFrame] = selectedPath.ranges[phase.id];
-        videoCaption.textContent = `${selectedPath.label} · ${selectedPath.detail} · frames ${startFrame}–${endFrame}`;
+    function updateProgress() {
+      if (!video) return;
+      const finished = mode === 'verify' || mode === 'complete';
+      const elapsed = finished ? durations[index] : Math.min(pendingTime ?? video.currentTime, durations[index]);
+      const percent = Math.round(100 * elapsed / durations[index]);
+      $('#ag-percent').textContent = percent + '%';
+      progressFill.style.width = percent + '%';
+      progress.setAttribute('aria-valuenow', percent);
+      seek.value = offsets[index] + elapsed;
+      $('#ag-time').textContent = formatTime(offsets[index] + elapsed) + ' / ' + formatTime(total) + ' · ' + speed + '×';
+    }
+
+    function updateStatus() {
+      const phase = phases[index];
+      const inProgress = mode !== 'preview' && mode !== 'complete';
+      play.textContent = playing ? 'Ⅱ Pause' : inProgress ? '▶ Continue' : '▶ Play task';
+      const stage = {
+        preview: 'Ready', observe: 'Observe & Identify', execute: 'Executing',
+        verify: 'Checking conditions', complete: walkthrough ? 'Walkthrough complete' : 'Phase complete'
+      };
+      $('#ag-stage').textContent = phaseId(phase) + ' · ' + stage[mode] + (inProgress && !playing ? ' · Paused' : '');
+      const reviewing = phase.kind !== 'home' && (mode === 'verify' || mode === 'complete');
+      contract.classList.toggle('ag-show-verification', reviewing);
+      verification.setAttribute('aria-hidden', String(!reviewing));
+      execution.setAttribute('aria-hidden', String(reviewing));
+      phaseProgress.hidden = !video || mode !== 'execute' || method(phase) !== 'VLA';
+      const activeStep = reviewing ? 'verify' : mode === 'execute' || mode === 'complete' ? 'execute' : 'observe';
+      loopSteps.forEach(step => step.classList.toggle('active', step.dataset.agLoop === activeStep));
+      phaseButtons.forEach((button, i) => {
+        button.classList.toggle('executing', i === index);
+        button.setAttribute('aria-pressed', String(i === index));
+        button.querySelector('em').textContent = completed.has(i) ? '✓ Played' : i === index ? '● Current phase' : '';
+      });
+      updateProgress();
+    }
+
+    function pausePlayback() {
+      clearTimeout(stageTimer);
+      ++playRequest;
+      playing = false;
+      video?.pause();
+      updateStatus();
+    }
+
+    function observe() {
+      stageTimer = setTimeout(() => {
+        mode = 'execute';
+        updateStatus();
+        playClip();
+      }, 300);
+    }
+
+    async function playClip() {
+      const request = ++playRequest;
+      try {
+        await video.play();
+      } catch (error) {
+        if (request !== playRequest || error.name === 'AbortError') return;
+        status.textContent = 'Playback unavailable. Press Play to retry.';
+        pausePlayback();
       }
-      setVideoPhase(selectedPath, phase, true);
-    };
+    }
 
-    root.querySelectorAll('[data-agent-path]').forEach(button => button.addEventListener('click', () => {
-      activePathId = button.dataset.agentPath;
-      const nextPath = selectedPathFor(paths);
-      activePhaseId = firstAvailablePhase(task, nextPath).id;
-      render(task);
-    }));
-    root.querySelectorAll('[data-agent-phase]').forEach(button => button.addEventListener('click', () => {
-      const phase = phases.find(candidate => candidate.id === Number(button.dataset.agentPhase));
-      if (!button.disabled) updatePhase(phase);
-    }));
-    if (video && selectedPath) setVideoPhase(selectedPath, selected, false);
+    function selectPhase(nextIndex, {autoplay = false, time = 0} = {}) {
+      clearTimeout(stageTimer);
+      ++playRequest;
+      video?.pause();
+      transitionAnimations.forEach(animation => animation.cancel());
+      if (nextIndex !== index && !reducedMotion.matches) {
+        transitionAnimations = [$('.ag-camera-stage'), contract].map(element =>
+          element.animate([{opacity: 0}, {opacity: 1}], {duration: 400, easing: 'ease'}));
+      }
+      index = nextIndex;
+      const phase = phases[index];
+      const home = phase.kind === 'home';
+      const evidence = agentData.completionEvidence?.[task.id]?.[phase.id] || phase.evidence?.join(' · ');
+      const reference = phase.media?.reference || phase.media?.poster;
+      playing = autoplay;
+      mode = autoplay && !home ? 'observe' : autoplay || time > 0 ? 'execute' : 'preview';
+      status.textContent = '';
+
+      $('#ag-contract-header').innerHTML = `
+        <div class="eyebrow">CURRENT · PHASE ${phaseId(phase)}</div>
+        <h3>${esc(phaseTitle(phase))}</h3>
+        <span class="route ${method(phase) === 'Control' ? 'teal' : 'blue'}">${esc(skill(phase))}</span>
+        <small>${esc(phase.arm)}</small>`;
+      $('#ag-contract-content').innerHTML = `
+        <p class="ag-prompt">${esc(phase.prompt)}</p>
+        <dl><dt>Local goal</dt><dd>${esc(phase.goal)}</dd>
+          <dt>Completion evidence</dt><dd>${esc(evidence)}</dd>
+        </dl>`;
+      verification.innerHTML = home ? '' : `
+        ${reference ? `<figure class="ag-reference"><img src="${esc(reference)}" alt="Situation reference" loading="lazy"><figcaption>Situation reference</figcaption></figure>` : ''}
+        <div class="ag-check-group"><strong>Recorded contract checks</strong>
+          ${[['Local goal', phase.goal], ['Completion evidence', evidence]].map(([label, check]) => `<div class="ag-check-row" data-state="pending">
+            <span class="ag-check-icon" aria-hidden="true">○</span><span><strong>${label}</strong> ${esc(check)}</span>
+          </div>`).join('')}
+        </div>
+        <div id="ag-verdict" class="ag-success" role="status"></div>`;
+      checkRows = [...verification.querySelectorAll('.ag-check-row')];
+      verificationStep = 0;
+      if (path) {
+        const [start, end] = path.ranges[phase.id];
+        $('#ag-caption').textContent = path.label + ' · ' + path.detail + ' · frames ' + start + '–' + end;
+        progress.style.setProperty('--method-color', '#4c78a8');
+        const source = path.clips[phase.id];
+        pendingTime = time;
+        if (video.getAttribute('src') !== source || video.error) {
+          video.src = source;
+          video.load();
+        }
+        if (video.readyState >= 1) applySeek();
+        video.playbackRate = speed;
+        if (autoplay) {
+          if (home) playClip();
+          else observe();
+        }
+      }
+      updateStatus();
+    }
+
+    function applySeek() {
+      if (pendingTime === null) return;
+      video.currentTime = Math.min(pendingTime, Math.max(0, video.duration - 1 / path.fps));
+      pendingTime = null;
+      updateProgress();
+    }
+
+    function finishPhase() {
+      completed.add(index);
+      if (walkthrough && index + 1 < phases.length) {
+        selectPhase(index + 1, {autoplay: true});
+      } else {
+        mode = 'complete';
+        playing = false;
+        updateStatus();
+      }
+    }
+
+    function passCheck(row) {
+      row.dataset.state = 'passed';
+      row.querySelector('.ag-check-icon').textContent = '✓';
+    }
+
+    function advanceVerification() {
+      // Match the original walkthrough's three-second review and result hold.
+      const [goal, evidence] = checkRows;
+      const steps = [
+        [300, () => goal.classList.add('ag-check-visible')],
+        [1050, () => evidence.classList.add('ag-check-visible')],
+        [450, () => passCheck(goal)],
+        [750, () => passCheck(evidence)],
+        [450, () => {
+          const verdict = $('#ag-verdict');
+          verdict.textContent = '✓ Contract checks passed';
+          verdict.classList.add('ag-verdict-visible');
+        }],
+        [1500, finishPhase]
+      ];
+      const [delay, action] = steps[verificationStep];
+      stageTimer = setTimeout(() => {
+        verificationStep++;
+        action();
+        if (mode === 'verify') advanceVerification();
+      }, delay);
+    }
+
+    dispose = () => {
+      ++playRequest;
+      clearTimeout(stageTimer);
+      mediaEvents.abort();
+      video?.pause();
+      transitionAnimations.forEach(animation => animation.cancel());
+    };
+    play.disabled = replay.disabled = speedSelect.disabled = !path;
+    speedSelect.value = speed;
+    if (scenario) {
+      scenario.value = path.id;
+      scenario.disabled = paths.length === 1;
+      scenario.onchange = () => {
+        selectedPaths.set(task.id, scenario.value);
+        render(task);
+        root.querySelector('#ag-scenario').focus({preventScroll: true});
+      };
+    }
+    function startTask() {
+      completed.clear();
+      walkthrough = true;
+      selectPhase(0, {autoplay: true});
+    }
+    if (video) {
+      play.onclick = () => {
+        if (playing) {
+          pausePlayback();
+        } else if (mode === 'preview' || mode === 'complete') {
+          startTask();
+        } else if (video.error) {
+          selectPhase(index, {autoplay: true, time: pendingTime ?? video.currentTime});
+        } else {
+          playing = true;
+          status.textContent = '';
+          if (mode === 'observe') observe();
+          else if (mode === 'verify') advanceVerification();
+          else playClip();
+          updateStatus();
+        }
+      };
+      replay.onclick = startTask;
+      speedSelect.onchange = () => {
+        speed = Number(speedSelect.value);
+        video.playbackRate = speed;
+        updateProgress();
+      };
+      const listenerOptions = {signal: mediaEvents.signal};
+      video.addEventListener('loadedmetadata', applySeek, listenerOptions);
+      video.addEventListener('timeupdate', updateProgress, listenerOptions);
+      video.addEventListener('error', () => {
+        status.textContent = 'Could not load the phase recording.';
+        pausePlayback();
+      }, listenerOptions);
+      video.addEventListener('ended', () => {
+        if (!playing || mode !== 'execute') return;
+        if (phases[index].kind === 'home') {
+          finishPhase();
+          return;
+        }
+        mode = 'verify';
+        updateStatus();
+        advanceVerification();
+      }, listenerOptions);
+      seek.oninput = () => {
+        const position = Number(seek.value);
+        const nextIndex = offsets.findLastIndex(offset => offset <= position);
+        selectPhase(nextIndex, {autoplay: playing, time: position - offsets[nextIndex]});
+      };
+    }
+    phaseButtons.forEach((button, i) => {
+      button.onclick = () => {
+        walkthrough = false;
+        selectPhase(i, {autoplay: Boolean(video)});
+      };
+    });
+    selectPhase(0);
   }
 
   store.on(render);

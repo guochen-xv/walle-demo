@@ -1,0 +1,43 @@
+{
+  "video": "buckle.mp4",
+  "fps": 30,
+  "frameCount": 1329,
+  "phases": [
+    {
+      "phase": 0,
+      "startFrame": 0,
+      "endFrame": 280,
+      "caption": "Move the left hand to the buckle at the lower end of the image-left shoulder strap and close around it."
+    },
+    {
+      "phase": 1,
+      "startFrame": 281,
+      "endFrame": 512,
+      "caption": "Maintain the existing buckle hold, then raise the buckle and attached shoulder strap to release the strap."
+    },
+    {
+      "phase": 2,
+      "startFrame": 513,
+      "endFrame": 708,
+      "caption": "Return both arms to the demonstrated rest pose; keep both grippers unchanged."
+    },
+    {
+      "phase": 3,
+      "startFrame": 709,
+      "endFrame": 943,
+      "caption": "Move the right hand to the buckle at the lower end of the image-right shoulder strap and close around it."
+    },
+    {
+      "phase": 4,
+      "startFrame": 944,
+      "endFrame": 1163,
+      "caption": "Maintain the right-hand buckle hold, then raise the buckle and attached strap to release the strap."
+    },
+    {
+      "phase": 5,
+      "startFrame": 1164,
+      "endFrame": 1328,
+      "caption": "Return both arms to the demonstrated rest pose; keep both grippers unchanged."
+    }
+  ]
+}

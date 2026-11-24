@@ -3,6 +3,29 @@
   'use strict';
   const $=s=>document.querySelector(s), esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const store=window.WalleTaskStore; if(!store)return;
+  const heroScene=$('.hero-scene'), heroPackets=[...document.querySelectorAll('[data-packet]')];
+  const heroLabels=[['Task structure','Phase contracts','Prepared skills','Object relations','Grasp waypoints','Phase prompts'],['Task context','Phase dependencies','Execution inputs','Completion evidence','Recovery rules','Prepared skills']];
+  let heroTime=0, lastHeroTime=0;
+  function animateHeroPackets(time){
+    heroPackets.forEach((packet,side)=>{
+      const clock=time+(side?1.8:0), cycle=Math.floor(clock/4.2), progress=(clock%4.2)/4.2;
+      const lane=cycle%3, startY=[110,165,220][lane];
+      const x=side?760+80*progress:395+50*progress;
+      const y=side?165+(startY-165)*progress:startY+(165-startY)*progress;
+      packet.setAttribute('transform',`translate(${x} ${y})`);
+      packet.style.opacity=String(Math.min(1,progress*7,(1-progress)*7));
+      const label=heroLabels[side][cycle%heroLabels[side].length];
+      const text=packet.querySelector('text');
+      if(text&&text.textContent!==label)text.textContent=label;
+    });
+  }
+  function animateHero(now){
+    const delta=lastHeroTime?Math.min((now-lastHeroTime)/1000,.1):0; lastHeroTime=now;
+    if(!document.hidden&&heroScene&&!heroScene.classList.contains('offscreen')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+      heroTime+=delta; animateHeroPackets(heroTime);
+    }
+    requestAnimationFrame(animateHero);
+  }
   let selectedPhase=0, selectedNodeId=null, selectedPathId=null, graphResize;
   const phaseTitle=p=>p.kind==='home'?'Return home':(p.target ? `${p.operation} · ${p.target}` : p.operation || 'Prepared phase');
   const phaseById=t=>new Map(t.phases.map(p=>[p.id,p]));
@@ -62,4 +85,5 @@
   updateStaticTask(store.current);renderSituation(store.current);renderControls();
   new ResizeObserver(()=>drawEdges(store.current)).observe($('#situation-card'));
   window.addEventListener('resize',()=>drawEdges(store.current));
+  requestAnimationFrame(animateHero);
 })();
