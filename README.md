@@ -1,4 +1,4 @@
-# WALLE demo
+# Situated Learning demo
 
 This static page presents three existing Situated Learning results as one switchable demo:
 
